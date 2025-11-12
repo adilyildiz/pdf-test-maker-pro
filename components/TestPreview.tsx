@@ -6,9 +6,22 @@ interface TestPreviewProps {
   questions: Question[];
   innerRef: React.Ref<HTMLDivElement>;
   isMeasureOnly?: boolean;
+  startIndex?: number;
 }
 
-export const TestPreview: React.FC<TestPreviewProps> = ({ details, questions, innerRef, isMeasureOnly = false }) => {
+export const TestPreview: React.FC<TestPreviewProps> = ({ details, questions, innerRef, isMeasureOnly = false, startIndex = 0 }) => {
+  // Debug log
+  React.useEffect(() => {
+    if (!isMeasureOnly) {
+      console.log('TestPreview render:', {
+        questionCount: questions.length,
+        startIndex,
+        booklet: details.booklet,
+        isMeasureOnly
+      });
+    }
+  }, [questions, startIndex, details.booklet, isMeasureOnly]);
+
   const baseStyles: React.CSSProperties = {
     width: '210mm',
     fontFamily: 'Times New Roman, serif',
@@ -43,13 +56,16 @@ export const TestPreview: React.FC<TestPreviewProps> = ({ details, questions, in
         {questions.map((q, index) => (
           <div key={q.id} className="question-item" style={{ breakInside: 'avoid', pageBreakInside: 'avoid', marginBottom: '1rem' }}>
             <div className="flex items-start">
-              <span className="font-bold mr-2">{q.originalIndex! + 1}.</span>
+              <span className="font-bold mr-2">{startIndex + index + 1}.</span>
               <div className="flex-1">
-                {q.image && <img src={q.image} alt={`Question ${q.originalIndex! + 1} image`} className="mb-2 max-w-full h-auto" />}
+                {q.image && <img src={q.image} alt={`Question ${startIndex + index + 1} image`} className="mb-2 max-w-full h-auto" />}
                 <div dangerouslySetInnerHTML={{ __html: q.text }} />
-                <div className="mt-1 flex flex-col">
+                <div className="mt-1 space-y-0.5">
                   {q.answers.map((ans, ansIndex) => (
-                    ans.text && <span key={ansIndex}>{String.fromCharCode(97 + ansIndex)}) {ans.text}</span>
+                    ans.text && <div key={ansIndex} className="flex items-start">
+                      <span className="mr-1">{String.fromCharCode(97 + ansIndex)})</span>
+                      <span className="flex-1">{ans.text}</span>
+                    </div>
                   ))}
                 </div>
               </div>

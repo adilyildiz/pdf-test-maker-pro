@@ -1,0 +1,633 @@
+{
+  "testDetails": {
+    "schoolYear": "2025 - 2026",
+    "faculty": "BİLGİSAYAR VE BİLİŞİM BİLİMLERİ FAKÜLTESİ",
+    "department": "DİJİTAL OYUN TASARIMI BÖLÜMÜ",
+    "course": "TEMEL BİLGİ TEKNOLOJİLERİ",
+    "examType": "ÇOKTAN SEÇMELİ TEST SINAVI",
+    "booklet": "A"
+  },
+  "questions": [
+    {
+      "id": "2025-11-12T13:11:09.400Z-0-0.15884645329714486",
+      "text": "“ ……… sayılar, rakamlar, sözcükler, metinler, resimler, olaylar vb. biçiminde temsil edilen ham gerçekliklerdir.”<div>Cümlede boş bırakılan yere aşağıdakilerden hangisi getirilmelidir?</div>",
+      "image": null,
+      "answers": [
+        {
+          "text": "Bilgi"
+        },
+        {
+          "text": "Veri"
+        },
+        {
+          "text": "İfade"
+        },
+        {
+          "text": "Teknoloji"
+        },
+        {
+          "text": "İşlem"
+        }
+      ],
+      "correctAnswerIndex": 1
+    },
+    {
+      "id": "2025-11-12T13:11:09.401Z-1-0.43491245055940675",
+      "text": "Aşağıdakilerden hangisi veri işleme türlerinden biri değildir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "El yordamı"
+        },
+        {
+          "text": "Mekanik"
+        },
+        {
+          "text": "Elektromekanik"
+        },
+        {
+          "text": "Elektronik"
+        },
+        {
+          "text": "Kronolojik"
+        }
+      ],
+      "correctAnswerIndex": 4
+    },
+    {
+      "id": "2025-11-12T13:11:09.401Z-2-0.49118914933015956",
+      "text": "Aşağıdakilerden hangisi 30 sayısının on altılık tabandaki karşılığıdır?",
+      "image": null,
+      "answers": [
+        {
+          "text": "1A"
+        },
+        {
+          "text": "1B"
+        },
+        {
+          "text": "1C"
+        },
+        {
+          "text": "1D"
+        },
+        {
+          "text": "1E"
+        }
+      ],
+      "correctAnswerIndex": 4
+    },
+    {
+      "id": "2025-11-12T13:11:09.401Z-3-0.05870236360335368",
+      "text": "İkilik tabandaki 1000011 sayısının onluk tabandaki karşılığı aşağıdakilerden hangisidir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "76"
+        },
+        {
+          "text": "67"
+        },
+        {
+          "text": "74"
+        },
+        {
+          "text": "47"
+        },
+        {
+          "text": "80"
+        }
+      ],
+      "correctAnswerIndex": 1
+    },
+    {
+      "id": "2025-11-12T13:11:09.401Z-4-0.9194840909239739",
+      "text": "“Üzerinde çeşitli aygıtlar arasında veri iletimini sağlayan veri yollarını ve transistör, çip, entegre gibi bileşenleri barındıran plakaya …………………........... denir”<div>Cümlede boş bırakılan yere aşağıdakilerden hangisi getirilmelidir?</div>",
+      "image": null,
+      "answers": [
+        {
+          "text": "RAM"
+        },
+        {
+          "text": "Anakart"
+        },
+        {
+          "text": "ISA"
+        },
+        {
+          "text": "CPU"
+        },
+        {
+          "text": "AGP"
+        }
+      ],
+      "correctAnswerIndex": 1
+    },
+    {
+      "id": "2025-11-12T13:11:09.419Z-6-0.06003343091739188",
+      "text": "Aşağıdakilerden hangisi büyük miktarlardaki verileri depolayıp bu verilere hızlı bir erişim sağlanmasına ve bu verilerden raporlar hazırlanmasına imkân veren yazılımlardır?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Hesap tablosu yazılımları"
+        },
+        {
+          "text": "İşletim sistemi yazılımları"
+        },
+        {
+          "text": "Veri tabanı yönetim sistemleri"
+        },
+        {
+          "text": "Kelime işlem yazılımları"
+        },
+        {
+          "text": "Sunum yazılımları"
+        }
+      ],
+      "correctAnswerIndex": 2
+    },
+    {
+      "id": "2025-11-12T13:11:09.419Z-7-0.4180384349200913",
+      "text": "Kullanıcıların bilgisayarı kullanabilmeleri için gerekli olan tüm programlara verilen genel ad aşağıdakilerden hangisidir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Donanım"
+        },
+        {
+          "text": "Derleyici"
+        },
+        {
+          "text": "Yorumlayıcı"
+        },
+        {
+          "text": "Yazılım"
+        },
+        {
+          "text": "Düzenleyici"
+        }
+      ],
+      "correctAnswerIndex": 3
+    },
+    {
+      "id": "2025-11-12T13:11:09.419Z-8-0.3946623808340276",
+      "text": "I. Ubuntu&nbsp;<div>II. Debian&nbsp;</div><div>III. Windows&nbsp;</div><div>Yukarıdakilerden hangisi ya da hangileri açık kaynak kodlu işletim sistemlerindendir?</div>",
+      "image": null,
+      "answers": [
+        {
+          "text": "Yalnız I"
+        },
+        {
+          "text": "Yalnız II"
+        },
+        {
+          "text": "I ve II"
+        },
+        {
+          "text": "II ve III"
+        },
+        {
+          "text": "I, II ve III"
+        }
+      ],
+      "correctAnswerIndex": 2
+    },
+    {
+      "id": "2025-11-12T13:11:09.419Z-9-0.43862980523775963",
+      "text": "Microsoft Excel programı aşağıdaki hangi üretkenlik yazılımı kategorisindedir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Kelime işlem"
+        },
+        {
+          "text": "Veri tabanı"
+        },
+        {
+          "text": "Sunum"
+        },
+        {
+          "text": "Hesap tablosu"
+        },
+        {
+          "text": "Çizim"
+        }
+      ],
+      "correctAnswerIndex": 3
+    },
+    {
+      "id": "2025-11-12T13:11:09.419Z-10-0.9569768764758315",
+      "text": "I. Dosya&nbsp;<div>II. Sürücü&nbsp;</div><div>III. Klasör&nbsp;</div><div>Yukarıdakilerin hiyerarşik olarak sıralanışı hangisinde doğru olarak verilmiştir?</div>",
+      "image": null,
+      "answers": [
+        {
+          "text": "II, III ve I"
+        },
+        {
+          "text": "II, I ve III"
+        },
+        {
+          "text": "I, II ve III"
+        },
+        {
+          "text": "I, III ve II"
+        },
+        {
+          "text": "III, II ve I"
+        }
+      ],
+      "correctAnswerIndex": 0
+    },
+    {
+      "id": "2025-11-12T13:11:09.419Z-11-0.31371400736981725",
+      "text": "Aşağıdakilerden hangisinde bilgisayarda arama yaparken son üç harfi “AÖF”, uzantısı “.docx” olan dosyanın arama kriteri doğru olarak verilmiştir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "ATAAÖF.docx"
+        },
+        {
+          "text": "AÖF.docx"
+        },
+        {
+          "text": "*AÖF.docx"
+        },
+        {
+          "text": "AÖF*.docx"
+        },
+        {
+          "text": "AÖF.***"
+        }
+      ],
+      "correctAnswerIndex": 2
+    },
+    {
+      "id": "2025-11-12T13:11:09.419Z-12-0.1136105925073091",
+      "text": "Aşağıdakilerden hangisi ekranın anlık görüntüsünü panoya kopyalamak için kullanılan tuştur?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Scroll Lock"
+        },
+        {
+          "text": "Space Bar"
+        },
+        {
+          "text": "Print Screen"
+        },
+        {
+          "text": "Back Space"
+        },
+        {
+          "text": "Pause / Break"
+        }
+      ],
+      "correctAnswerIndex": 2
+    },
+    {
+      "id": "2025-11-12T13:11:09.419Z-13-0.9239443102226317",
+      "text": "I. Nesneleri doğrudan silmek için Shift+Delete tuş bileşeni kullanılır.&nbsp;<div>II. Geri dönüşüm kutusuna gönderilen nesneler bilgisayardan tamamen silinir.&nbsp;</div><div>III. Geri dönüşüm kutusunun disk kullanım alanı değiştirilemez.&nbsp;</div><div>Geri dönüşüm kutusuna ilişkin yukarıdaki ifadelerden hangisi ya da hangileri doğrudur?</div>",
+      "image": null,
+      "answers": [
+        {
+          "text": "Yalnız I"
+        },
+        {
+          "text": "Yalnız II"
+        },
+        {
+          "text": "I ve II"
+        },
+        {
+          "text": "II ve III"
+        },
+        {
+          "text": "I, II ve III"
+        }
+      ],
+      "correctAnswerIndex": 0
+    },
+    {
+      "id": "2025-11-12T13:11:09.419Z-14-0.16657195762313004",
+      "text": "Açık olan ve çalışan program veya uygulamalar ………….. üzerinde düğme şeklinde görünmektedir. Cümlede boş bırakılan yere aşağıdakilerden hangisi getirilmelidir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "adres çubuğu"
+        },
+        {
+          "text": "görev çubuğu"
+        },
+        {
+          "text": "durum çubuğu"
+        },
+        {
+          "text": "bildirim alanı"
+        },
+        {
+          "text": "sütun başlıkları"
+        }
+      ],
+      "correctAnswerIndex": 1
+    },
+    {
+      "id": "2025-11-12T13:11:09.419Z-15-0.6191727335709726",
+      "text": "Aşağıdakilerden hangisi nesne isimlendirmesi ile ilgili yanlıştır?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Fare kullanılarak yeniden isimlendirme çerçevesi aktifleştirilebilir."
+        },
+        {
+          "text": "Nesne kullanımda iken ismi değiştirilebilir."
+        },
+        {
+          "text": "“ ? \\ karakterleri kullanılmaz."
+        },
+        {
+          "text": "F2 tuşu ile yeniden isimlendirme çerçevesi aktifleştirilebilir."
+        },
+        {
+          "text": "Yeni nesne ismini onaylamak için ENTER tuşu kullanılır."
+        }
+      ],
+      "correctAnswerIndex": 1
+    },
+    {
+      "id": "2025-11-12T13:11:09.419Z-16-0.8823765915683139",
+      "text": "I. Delete tuşu kullanılabilir.&nbsp;<div>II. Sağ tuş menüsündeki sil seçeneği kullanılabilir.&nbsp;</div><div>III. Shift+Delete tuş bileşeni kullanılabilir.&nbsp;</div><div>Yukarıdakilerden hangisi ya da hangileri nesne silme işleminde, nesneyi geri dönüşüm kutusuna göndermeden silme işlemi için kullanılabilir?</div>",
+      "image": null,
+      "answers": [
+        {
+          "text": "Yalnız I"
+        },
+        {
+          "text": "Yalnız II"
+        },
+        {
+          "text": "Yalnız III"
+        },
+        {
+          "text": "II ve III"
+        },
+        {
+          "text": "I, II ve III"
+        }
+      ],
+      "correctAnswerIndex": 2
+    },
+    {
+      "id": "2025-11-12T13:11:09.419Z-17-0.49097871911638136",
+      "text": "I. Ctrl+K -&gt; Kopyala&nbsp;<div>II. Ctrl+X -&gt; Kes&nbsp;</div><div>III. Ctrl+V -&gt; Yapıştır&nbsp;</div><div>Yukarıdaki kısayol ve işlevi eşleştirmelerinden hangisi ya da hangileri doğrudur?</div>",
+      "image": null,
+      "answers": [
+        {
+          "text": "Yalnız I"
+        },
+        {
+          "text": "Yalnız II"
+        },
+        {
+          "text": "I ve II"
+        },
+        {
+          "text": "II ve III"
+        },
+        {
+          "text": "I, II ve III"
+        }
+      ],
+      "correctAnswerIndex": 3
+    },
+    {
+      "id": "2025-11-12T13:11:09.419Z-18-0.2567872842467347",
+      "text": "…………………… bilgisayar sistemindeki tüm yazılım ve donanım birimlerine yönelik ayar yapma imkanı tanır.&nbsp;<div>Cümlede boş bırakılan yere aşağıdakilerden hangisi getirilmelidir?</div>",
+      "image": null,
+      "answers": [
+        {
+          "text": "Denetim Masası"
+        },
+        {
+          "text": "Belgeler"
+        },
+        {
+          "text": "Donatılar"
+        },
+        {
+          "text": "Aygıtlar ve Yazıcılar"
+        },
+        {
+          "text": "Yardım ve Destek"
+        }
+      ],
+      "correctAnswerIndex": 0
+    },
+    {
+      "id": "2025-11-12T13:11:09.419Z-19-0.2891740156543908",
+      "text": "Aşağıdakilerden hangisi Denetim Masasındaki Bölge bileşeni yardımıyla yapılan ayarlardan değildir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Geçerli konum bilgisini belirleme"
+        },
+        {
+          "text": "Para birimi simgesini değiştirme"
+        },
+        {
+          "text": "Sayı görüntülemedeki ondalık ayracı belirleme"
+        },
+        {
+          "text": "Ekran koruyucu seçeneklerini değiştirme"
+        },
+        {
+          "text": "Tarih görüntüleme ayarını değiştirme"
+        }
+      ],
+      "correctAnswerIndex": 3
+    },
+    {
+      "id": "2025-11-12T13:11:09.419Z-20-0.546439826650382",
+      "text": "I. Programlar kaldırılıp değiştirilebilir.&nbsp;<div>II. Windows özellikleri açılıp kapatılabilir.&nbsp;</div><div>III. Yüklü güncelleştirmeler görüntülenebilir.&nbsp;</div><div>Yukarıdakilerden hangisi ya da hangileri Programlar ve Özellikler penceresinden yapılabilir?</div>",
+      "image": null,
+      "answers": [
+        {
+          "text": "Yalnız I"
+        },
+        {
+          "text": "Yalnız II"
+        },
+        {
+          "text": "I ve II"
+        },
+        {
+          "text": "II ve III"
+        },
+        {
+          "text": "I, II ve III"
+        }
+      ],
+      "correctAnswerIndex": 4
+    },
+    {
+      "id": "2025-11-12T13:11:09.419Z-21-0.06028161130013121",
+      "text": "…………………………… bilgisayarın sahip olduğu tüm donanımların listelenmesini sağlamaktadır.&nbsp;<div>Cümlede boş bırakılan yere aşağıdakilerden hangisi getirilmelidir?</div>",
+      "image": null,
+      "answers": [
+        {
+          "text": "Görev yöneticisi"
+        },
+        {
+          "text": "Aygıt yöneticisi"
+        },
+        {
+          "text": "Program yöneticisi"
+        },
+        {
+          "text": "Yazılım yöneticisi"
+        },
+        {
+          "text": "Donanım yöneticisi"
+        }
+      ],
+      "correctAnswerIndex": 1
+    },
+    {
+      "id": "2025-11-12T13:11:09.419Z-22-0.7190507932647465",
+      "text": "Word programında bulunan tüm komutların yer aldığı bölümün adı aşağıdakilerden hangisidir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Şerit"
+        },
+        {
+          "text": "Düzenleme alanı"
+        },
+        {
+          "text": "Kaydırma çubuğu"
+        },
+        {
+          "text": "Yakınlaştırma kaydırıcısı"
+        },
+        {
+          "text": "Durum çubuğu"
+        }
+      ],
+      "correctAnswerIndex": 0
+    },
+    {
+      "id": "2025-11-12T13:11:09.419Z-23-0.4704705248835943",
+      "text": "Diğer programlardaki menü ve araç çubuklarına benzer işlevi gören, ortak görevler için grupları ve komutları barındıran etkinlik alanı aşağıdakilerden hangisidir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Sekme"
+        },
+        {
+          "text": "Şerit"
+        },
+        {
+          "text": "Komut"
+        },
+        {
+          "text": "Menü"
+        },
+        {
+          "text": "Araç"
+        }
+      ],
+      "correctAnswerIndex": 1
+    },
+    {
+      "id": "2025-11-12T13:11:09.419Z-24-0.5557765132476314",
+      "text": "Nesne ve metinlerin yerleşim ayarları gibi yazım alanının organizasyonunun yapıldığı sekme aşağıdakilerden hangisidir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Giriş sekmesi"
+        },
+        {
+          "text": "Ekle Sekmesi"
+        },
+        {
+          "text": "Başvuru sekmesi"
+        },
+        {
+          "text": "Sayfa düzeni sekmesi"
+        },
+        {
+          "text": "Postalar sekmesi"
+        }
+      ],
+      "correctAnswerIndex": 3
+    },
+    {
+      "id": "2025-11-12T13:11:09.419Z-25-0.10875283827930016",
+      "text": "Aşağıdaki işlemlerden hangisi giriş sekmesinden yapılamaz?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Kes – Kopyala – Yapıştır"
+        },
+        {
+          "text": "Madde İşaretleri – Numaralandırma"
+        },
+        {
+          "text": "İki Yana Yasla"
+        },
+        {
+          "text": "Kenar Boşlukları"
+        },
+        {
+          "text": "Girintiyi Artır"
+        }
+      ],
+      "correctAnswerIndex": 3
+    },
+    {
+      "id": "2025-11-12T13:11:09.419Z-26-0.7318380096868525",
+      "text": "Seçilen metindeki yazı tipi boyutu, biçimi ve yazı tipi gibi özelliklerinin başka bir metinde yapıştırılması aşağıdaki hangi araç ile yapılır?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Belge özellikleri"
+        },
+        {
+          "text": "Biçim boyacısı"
+        },
+        {
+          "text": "Biçimlendirmesi"
+        },
+        {
+          "text": "Numaralandırma"
+        },
+        {
+          "text": "Stiller"
+        }
+      ],
+      "correctAnswerIndex": 1
+    },
+    {
+      "id": "2025-11-12T13:17:35.571Z",
+      "text": "“Çözünürlük, değerini yatay (satır) ve düşey (sütun) olarak sıralanan …….. sayısının yazımıyla ifade edilir.”<div>Cümlede boş bırakılan yere aşağıdakilerden hangisi getirilmelidir?</div>",
+      "image": null,
+      "answers": [
+        {
+          "text": "dpi"
+        },
+        {
+          "text": "pixel"
+        },
+        {
+          "text": "VGA"
+        },
+        {
+          "text": "inç"
+        },
+        {
+          "text": "DVI"
+        }
+      ],
+      "correctAnswerIndex": 1
+    }
+  ]
+}

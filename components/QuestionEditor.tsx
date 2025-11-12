@@ -19,6 +19,17 @@ const RichTextEditor: React.FC<{ value: string; onChange: (value: string) => voi
     onChange(e.currentTarget.innerHTML);
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    // Enter tuşuna basıldığında <div> yerine <br /> oluştur
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      document.execCommand('insertHTML', false, '<br />');
+      if (editorRef.current) {
+        onChange(editorRef.current.innerHTML);
+      }
+    }
+  };
+
   const execCmd = (command: string) => {
     editorRef.current?.focus();
     document.execCommand(command, false, undefined);
@@ -49,6 +60,7 @@ const RichTextEditor: React.FC<{ value: string; onChange: (value: string) => voi
       <div
         ref={editorRef}
         onInput={handleInput}
+        onKeyDown={handleKeyDown}
         contentEditable={true}
         className="w-full bg-slate-700 rounded-b-md p-2 outline-none"
         style={{ minHeight: '120px' }}
