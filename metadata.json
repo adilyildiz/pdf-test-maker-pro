@@ -1,0 +1,5 @@
+{
+  "name": "PDF Test Maker Pro",
+  "description": "An application to create multiple-choice tests with text and images, and generate two-column PDFs with an integrated optical answer sheet, similar to onlinetestmaker.net.",
+  "requestFramePermissions": []
+}
