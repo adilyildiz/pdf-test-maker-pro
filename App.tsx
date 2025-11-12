@@ -1201,7 +1201,7 @@ const handleImportGift = (event: React.ChangeEvent<HTMLInputElement>) => {
       <div className="min-h-screen p-4 sm:p-6 lg:p-8">
         <div className="max-w-7xl mx-auto">
           <header className="mb-8">
-            <h1 className="text-4xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-6xl">PDF Test Oluşturucu <span className="text-cyan-400">Pro</span></h1>
+            <h1 className="text-4xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-6xl">Test Oluşturucu <span className="text-cyan-400">Pro</span></h1>
             <p className="mt-4 text-xl text-slate-400">Zahmetsizce profesyonel, iki sütunlu testler oluşturun.</p>
           </header>
 
