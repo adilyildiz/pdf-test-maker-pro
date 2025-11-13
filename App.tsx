@@ -89,6 +89,7 @@ const App: React.FC = () => {
     course: 'TEMEL BİLGİ TEKNOLOJİLERİ',
     examType: 'ÇOKTAN SEÇMELİ TEST SINAVI',
     booklet: 'A', // Default, will be overridden during generation
+    studentNumberLength: 10, // Varsayılan 10 karakter
   });
   const [questions, setQuestions] = useState<Question[]>([]);
   const [numberOfBooklets, setNumberOfBooklets] = useState(2);
@@ -597,7 +598,7 @@ const handleImportGift = (event: React.ChangeEvent<HTMLInputElement>) => {
                         new TextRun({ text: "AD-SOYAD: ", bold: true }),
                         new TextRun("_____________________________"),
                         new TextRun({ text: "     PUAN: ", bold: true }),
-                        new TextRun("_________"),
+                        new TextRun("_____________________________"),
                     ],
                     spacing: { after: 100 }
                 }),
@@ -789,6 +790,267 @@ const handleImportGift = (event: React.ChangeEvent<HTMLInputElement>) => {
     }
 };
 
+  /**
+ * Word için optik form içeriği oluşturur (Görsel format)
+ * @param bookletType - Kitapçık harfi (A, B, C, D)
+ * @param questionCount - Toplam soru sayısı
+ * @param studentNumberLength - Öğrenci numarası karakter sayısı (kullanılmıyor, basit format)
+ * @returns docx paragraf ve tablo elemanları dizisi
+ */
+const generateOpticalFormContent = (
+  bookletType: string, 
+  questionCount: number, 
+  studentNumberLength: number
+): any[] => {
+  const children: any[] = [];
+    
+  // ÜST BİLGİLER (AD-SOYAD, NUMARA, PUAN)
+  children.push(
+    new Paragraph({
+      children: [
+        new TextRun({ text: "AD-SOYAD: ", bold: true }),
+        new TextRun("_____________________________")
+      ],
+      spacing: { after: 100 }
+    }),
+    new Paragraph({
+      children: [
+        new TextRun({ text: "NUMARA: ", bold: true }),
+        new TextRun("___________________________")
+      ],
+      spacing: { after: 100 }
+    }),
+    new Paragraph({
+      children: [
+        new TextRun({ text: "PUAN: ", bold: true }),
+        new TextRun("_____________________________")
+      ],
+      spacing: { after: 300 }
+    })
+  );
+
+  // CEVAP TABLOSU - 2 SÜTUNLU DÜZENİ
+  const answersPerColumn = Math.ceil(questionCount / 2);
+  const tableRows: TableRow[] = [];
+
+  // Başlık satırı
+  const headerRow = new TableRow({
+    children: [
+      // Sol sütun başlık
+      new TableCell({
+        children: [new Paragraph({ text: "", alignment: AlignmentType.CENTER })],
+        width: { size: 5, type: WidthType.PERCENTAGE },
+        borders: {
+          top: { style: BorderStyle.SINGLE, size: 15, color: "000000" },
+          left: { style: BorderStyle.SINGLE, size: 15, color: "000000" },
+          bottom: { style: BorderStyle.SINGLE, size: 10, color: "000000" },
+          right: { style: BorderStyle.SINGLE, size: 10, color: "000000" }
+        }
+      }),
+      ...['A', 'B', 'C', 'D', 'E'].map(letter => 
+        new TableCell({
+          children: [new Paragraph({ 
+            children: [new TextRun({ text: letter, bold: true })],
+            alignment: AlignmentType.CENTER
+          })],
+          width: { size: 8.5, type: WidthType.PERCENTAGE },
+          borders: {
+            top: { style: BorderStyle.SINGLE, size: 15, color: "000000" },
+            left: { style: BorderStyle.SINGLE, size: 10, color: "000000" },
+            bottom: { style: BorderStyle.SINGLE, size: 10, color: "000000" },
+            right: { style: BorderStyle.SINGLE, size: 10, color: "000000" }
+          }
+        })
+      ),
+      // Orta boşluk
+      new TableCell({
+        children: [new Paragraph({ text: "" })],
+        width: { size: 1, type: WidthType.PERCENTAGE },
+        borders: {
+          top: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+          left: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+          bottom: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+          right: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" }
+        }
+      }),
+      // Sağ sütun başlık
+      new TableCell({
+        children: [new Paragraph({ text: "", alignment: AlignmentType.CENTER })],
+        width: { size: 5, type: WidthType.PERCENTAGE },
+        borders: {
+          top: { style: BorderStyle.SINGLE, size: 15, color: "000000" },
+          left: { style: BorderStyle.SINGLE, size: 15, color: "000000" },
+          bottom: { style: BorderStyle.SINGLE, size: 10, color: "000000" },
+          right: { style: BorderStyle.SINGLE, size: 10, color: "000000" }
+        }
+      }),
+      ...['A', 'B', 'C', 'D', 'E'].map(letter => 
+        new TableCell({
+          children: [new Paragraph({ 
+            children: [new TextRun({ text: letter, bold: true })],
+            alignment: AlignmentType.CENTER
+          })],
+          width: { size: 8.5, type: WidthType.PERCENTAGE },
+          borders: {
+            top: { style: BorderStyle.SINGLE, size: 15, color: "000000" },
+            left: { style: BorderStyle.SINGLE, size: 10, color: "000000" },
+            bottom: { style: BorderStyle.SINGLE, size: 10, color: "000000" },
+            right: { style: BorderStyle.SINGLE, size: 10, color: "000000" }
+          }
+        })
+      )
+    ]
+  });
+  tableRows.push(headerRow);
+
+  // Soru satırları
+  for (let row = 0; row < answersPerColumn; row++) {
+    const leftQuestionNum = row + 1;
+    const rightQuestionNum = row + answersPerColumn + 1;
+    
+    const cells: TableCell[] = [];
+    
+    // Sol sütun - Soru numarası
+    cells.push(
+      new TableCell({
+        children: [
+          new Paragraph({ 
+            children: [new TextRun({ text: `${leftQuestionNum}`, bold: true })],
+            alignment: AlignmentType.CENTER
+          })
+        ],
+        width: { size: 5, type: WidthType.PERCENTAGE },
+        borders: {
+          top: { style: BorderStyle.SINGLE, size: 10, color: "000000" },
+          left: { style: BorderStyle.SINGLE, size: 15, color: "000000" },
+          bottom: { style: BorderStyle.SINGLE, size: 10, color: "000000" },
+          right: { style: BorderStyle.SINGLE, size: 10, color: "000000" }
+        }
+      })
+    );
+    
+    // Sol sütun - Cevap daireleri (A, B, C, D, E)
+    for (let opt = 0; opt < 5; opt++) {
+      cells.push(
+        new TableCell({
+          children: [
+            new Paragraph({
+              text: "O",
+              alignment: AlignmentType.CENTER
+            })
+          ],
+          width: { size: 8.5, type: WidthType.PERCENTAGE },
+          margins: { top: 30, bottom: 30 },
+          borders: {
+            top: { style: BorderStyle.SINGLE, size: 10, color: "000000" },
+            left: { style: BorderStyle.SINGLE, size: 10, color: "000000" },
+            bottom: { style: BorderStyle.SINGLE, size: 10, color: "000000" },
+            right: { style: BorderStyle.SINGLE, size: 10, color: "000000" }
+          }
+        })
+      );
+    }
+    
+    // Orta boşluk
+    cells.push(
+      new TableCell({
+        children: [new Paragraph({ text: "" })],
+        width: { size: 1, type: WidthType.PERCENTAGE },
+        borders: {
+          top: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+          left: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+          bottom: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+          right: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" }
+        }
+      })
+    );
+    
+    // Sağ sütun - Soru numarası veya boş
+    if (rightQuestionNum <= questionCount) {
+      cells.push(
+        new TableCell({
+          children: [
+            new Paragraph({ 
+              children: [new TextRun({ text: `${rightQuestionNum}`, bold: true })],
+              alignment: AlignmentType.CENTER
+            })
+          ],
+          width: { size: 5, type: WidthType.PERCENTAGE },
+          borders: {
+            top: { style: BorderStyle.SINGLE, size: 10, color: "000000" },
+            left: { style: BorderStyle.SINGLE, size: 15, color: "000000" },
+            bottom: { style: BorderStyle.SINGLE, size: 10, color: "000000" },
+            right: { style: BorderStyle.SINGLE, size: 10, color: "000000" }
+          }
+        })
+      );
+      
+      // Sağ sütun - Cevap daireleri
+      for (let opt = 0; opt < 5; opt++) {
+        cells.push(
+          new TableCell({
+            children: [
+              new Paragraph({
+                text: "O",
+                alignment: AlignmentType.CENTER
+              })
+            ],
+            width: { size: 8.5, type: WidthType.PERCENTAGE },
+            margins: { top: 30, bottom: 30 },
+            borders: {
+              top: { style: BorderStyle.SINGLE, size: 10, color: "000000" },
+              left: { style: BorderStyle.SINGLE, size: 10, color: "000000" },
+              bottom: { style: BorderStyle.SINGLE, size: 10, color: "000000" },
+              right: { style: BorderStyle.SINGLE, size: 10, color: "000000" }
+            }
+          })
+        );
+      }
+    } else {
+      // Sağ sütun boş (soru sayısı tek sayı ise)
+      cells.push(
+        new TableCell({
+          children: [new Paragraph({ text: "" })],
+          width: { size: 5, type: WidthType.PERCENTAGE },
+          borders: {
+            top: { style: BorderStyle.SINGLE, size: 10, color: "000000" },
+            left: { style: BorderStyle.SINGLE, size: 15, color: "000000" },
+            bottom: { style: BorderStyle.SINGLE, size: 10, color: "000000" },
+            right: { style: BorderStyle.SINGLE, size: 10, color: "000000" }
+          }
+        })
+      );
+      
+      for (let opt = 0; opt < 5; opt++) {
+        cells.push(
+          new TableCell({
+            children: [new Paragraph({ text: "" })],
+            width: { size: 8.5, type: WidthType.PERCENTAGE },
+            borders: {
+              top: { style: BorderStyle.SINGLE, size: 10, color: "000000" },
+              left: { style: BorderStyle.SINGLE, size: 10, color: "000000" },
+              bottom: { style: BorderStyle.SINGLE, size: 10, color: "000000" },
+              right: { style: BorderStyle.SINGLE, size: 10, color: "000000" }
+            }
+          })
+        );
+      }
+    }
+    
+    tableRows.push(new TableRow({ children: cells }));
+  }
+
+  const mainAnswerTable = new Table({
+    rows: tableRows,
+    width: { size: 100, type: WidthType.PERCENTAGE }
+  });
+
+  children.push(mainAnswerTable);
+
+  // Children array'i döndür
+  return children;
+};
+
   const handleGenerateWordColumns = async () => {
     if (questions.length === 0) {
         alert("Word dosyası oluşturmadan önce lütfen en az bir soru ekleyin.");
@@ -815,7 +1077,7 @@ const handleImportGift = (event: React.ChangeEvent<HTMLInputElement>) => {
             children.push(
                 new Paragraph({
                     text: `${testDetails.schoolYear} EĞİTİM - ÖĞRETİM YILI`,
-                    heading: HeadingLevel.HEADING_2,
+                    /*heading: HeadingLevel.HEADING_2,*/
                     alignment: AlignmentType.CENTER,
                 }),
                 new Paragraph({
@@ -840,7 +1102,7 @@ const handleImportGift = (event: React.ChangeEvent<HTMLInputElement>) => {
                         new TextRun({ text: "AD-SOYAD: ", bold: true }),
                         new TextRun("_____________________________"),
                         new TextRun({ text: "     PUAN: ", bold: true }),
-                        new TextRun("_________"),
+                        new TextRun("_____________________________"),
                     ],
                     spacing: { after: 100 }
                 }),
@@ -853,7 +1115,7 @@ const handleImportGift = (event: React.ChangeEvent<HTMLInputElement>) => {
                 }),
                 new Paragraph({
                     text: `${booklet.bookletType} KİTAPÇIĞI`,
-                    heading: HeadingLevel.HEADING_1,
+                    /*heading: HeadingLevel.HEADING_1,*/
                     alignment: AlignmentType.CENTER,
                     spacing: { after: 400 }
                 })
@@ -874,7 +1136,7 @@ const handleImportGift = (event: React.ChangeEvent<HTMLInputElement>) => {
                                     new TextRun({ text: `${index + 1}. `, bold: true }),
                                     new TextRun({ text: line.trim() })
                                 ],
-                                spacing: { after: 100 }
+                                spacing: { after: 0 }
                             })
                         );
                     } else {
@@ -882,8 +1144,8 @@ const handleImportGift = (event: React.ChangeEvent<HTMLInputElement>) => {
                         children.push(
                             new Paragraph({
                                 text: line.trim(),
-                                spacing: { after: 100 },
-                                indent: { left: 200 }
+                                spacing: { after: 0 },
+                                indent: { left: 200 },
                             })
                         );
                     }
@@ -894,8 +1156,8 @@ const handleImportGift = (event: React.ChangeEvent<HTMLInputElement>) => {
                     children.push(
                         new Paragraph({
                             text: `${String.fromCharCode(97 + idx)}) ${ans.text}`,
-                            spacing: { after: 50 },
-                            indent: { left: 360 }
+                            spacing: { after: 0 },
+                            indent: { left: 200 }
                         })
                     );
                 });
@@ -904,10 +1166,18 @@ const handleImportGift = (event: React.ChangeEvent<HTMLInputElement>) => {
                 children.push(
                     new Paragraph({
                         text: "",
-                        spacing: { after: 200 }
+                        spacing: { after: 0 }
                     })
                 );
             });
+
+            // Her kitapçığın sonuna optik formu ekle (aynı section içinde)
+            const opticalFormContent = generateOpticalFormContent(
+                booklet.bookletType,
+                questions.length, // Orijinal soru sayısı
+                testDetails.studentNumberLength ?? 10 // Öğrenci no karakter sayısı
+            );
+            children.push(...opticalFormContent);
 
             sections.push({
                 properties: {
@@ -1009,7 +1279,7 @@ const handleImportGift = (event: React.ChangeEvent<HTMLInputElement>) => {
 
         const blob = await Packer.toBlob(doc);
         saveAs(blob, `test_${testDetails.course.replace(/\s/g, '_')}_2sutun.docx`);
-        alert('Word dosyası (2 Sütun) başarıyla oluşturuldu!');
+        //alert('Word dosyası (2 Sütun) başarıyla oluşturuldu!');
 
     } catch (error) {
         console.error("Word dosyası oluşturma hatası:", error);
@@ -1221,6 +1491,21 @@ const handleImportGift = (event: React.ChangeEvent<HTMLInputElement>) => {
                         <option value={2}>2 (A, B)</option>
                         <option value={3}>3 (A, B, C)</option>
                         <option value={4}>4 (A, B, C, D)</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label htmlFor="studentNumberLength" className="block text-sm font-medium text-slate-300">Öğrenci No Karakter Sayısı</label>
+                    <select 
+                      id="studentNumberLength" 
+                      name="studentNumberLength" 
+                      value={testDetails.studentNumberLength ?? 10} 
+                      onChange={(e) => setTestDetails({...testDetails, studentNumberLength: parseInt(e.target.value)})}
+                      className="mt-1 block w-full bg-slate-700 border border-slate-600 rounded-md p-2 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition"
+                    >
+                      <option value={6}>6 Karakter</option>
+                      <option value={8}>8 Karakter</option>
+                      <option value={10}>10 Karakter</option>
+                      <option value={12}>12 Karakter</option>
                     </select>
                   </div>
               </div>

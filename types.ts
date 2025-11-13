@@ -18,4 +18,5 @@ export interface TestDetails {
   course: string;
   examType: string;
   booklet: string;
+  studentNumberLength?: number;
 }
