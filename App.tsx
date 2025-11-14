@@ -6,6 +6,7 @@ import { QuestionEditor } from './components/QuestionEditor';
 import { TestPreview } from './components/TestPreview';
 import { AnswerKeyPreview } from './components/AnswerKeyPreview';
 import { OpticalForm } from './components/OpticalForm';
+import { FontSelector } from './components/FontSelector';
 import { PlusIcon, TrashIcon, EditIcon, SpinnerIcon, DownloadIcon, UploadIcon } from './components/icons';
 import { Document, Paragraph, TextRun, HeadingLevel, AlignmentType, Table, TableRow, TableCell, WidthType, BorderStyle, Packer } from 'docx';
 import  saveAs  from 'file-saver';
@@ -96,6 +97,12 @@ const App: React.FC = () => {
   const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [editingQuestion, setEditingQuestion] = useState<Question | null>(null);
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
+    const [questionSpacing, setQuestionSpacing] = useState<number>(100); // Sorular arası boşluk (docx spacing.after)
+    const [removeQuestionSpacing, setRemoveQuestionSpacing] = useState<boolean>(false);
+    const [questionFontFamily, setQuestionFontFamily] = useState<string>('Times New Roman');
+    const [questionFontSize, setQuestionFontSize] = useState<number>(10);
+    const [headingFontFamily, setHeadingFontFamily] = useState<string>('Times New Roman');
+    const [headingFontSize, setHeadingFontSize] = useState<number>(12);
   
   const [currentlyRenderingPage, setCurrentlyRenderingPage] = useState<{ bookletType: string; questions: Question[]; startIndex: number } | null>(null);
   const [currentlyRenderingOpticalForm, setCurrentlyRenderingOpticalForm] = useState<string | null>(null);
@@ -118,6 +125,13 @@ const App: React.FC = () => {
             const parsedData = JSON.parse(savedData);
             if (parsedData.testDetails) setTestDetails(parsedData.testDetails);
             if (parsedData.questions) setQuestions(parsedData.questions);
+        if (parsedData.numberOfBooklets !== undefined) setNumberOfBooklets(Number(parsedData.numberOfBooklets));
+            if (parsedData.questionSpacing !== undefined) setQuestionSpacing(parsedData.questionSpacing);
+            if (parsedData.removeQuestionSpacing !== undefined) setRemoveQuestionSpacing(parsedData.removeQuestionSpacing);
+            if (parsedData.questionFontFamily) setQuestionFontFamily(parsedData.questionFontFamily);
+            if (parsedData.questionFontSize !== undefined) setQuestionFontSize(parsedData.questionFontSize);
+            if (parsedData.headingFontFamily) setHeadingFontFamily(parsedData.headingFontFamily);
+            if (parsedData.headingFontSize !== undefined) setHeadingFontSize(parsedData.headingFontSize);
         }
     } catch (error) {
         console.error("Veri localStorage'dan yüklenemedi", error);
@@ -127,12 +141,22 @@ const App: React.FC = () => {
   // Save all data to localStorage whenever it changes
   useEffect(() => {
     try {
-        const dataToSave = { testDetails, questions };
-        localStorage.setItem('pdfTestData', JSON.stringify(dataToSave));
+      const dataToSave = {
+        testDetails,
+        questions,
+        numberOfBooklets,
+        questionSpacing,
+        removeQuestionSpacing,
+        questionFontFamily,
+        questionFontSize,
+        headingFontFamily,
+        headingFontSize,
+      };
+      localStorage.setItem('pdfTestData', JSON.stringify(dataToSave));
     } catch (error) {
-        console.error("Veri localStorage'a kaydedilemedi", error);
+      console.error("Veri localStorage'a kaydedilemedi", error);
     }
-  }, [testDetails, questions]);
+  }, [testDetails, questions, numberOfBooklets, questionSpacing, removeQuestionSpacing, questionFontFamily, questionFontSize, headingFontFamily, headingFontSize]);
 
   const handleDetailsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTestDetails({ ...testDetails, [e.target.name]: e.target.value });
@@ -164,6 +188,17 @@ const App: React.FC = () => {
     if (window.confirm('Bu soruyu silmek istediğinizden emin misiniz?')) {
         setQuestions(questions.filter(q => q.id !== id));
     }
+  };
+
+  const deleteAllQuestions = () => {
+    if (questions.length === 0) {
+      alert('Silinecek soru bulunmuyor.');
+      return;
+    }
+    if (!window.confirm('Tüm soruları silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.')) return;
+    setQuestions([]);
+    // Eğer o anda PDF/optik oluşturma işlemi varsa sıfırla
+    resetPdfGenerationState();
   };
   
   const shuffleQuestionsAndAnswers = (originalQuestions: Question[]): Question[] => {
@@ -364,7 +399,17 @@ const App: React.FC = () => {
   };
 
   const handleExport = () => {
-    const dataToExport = { testDetails, questions };
+    const dataToExport = {
+      testDetails,
+      questions,
+      numberOfBooklets,
+      questionSpacing,
+      removeQuestionSpacing,
+      questionFontFamily,
+      questionFontSize,
+      headingFontFamily,
+      headingFontSize,
+    };
     const blob = new Blob([JSON.stringify(dataToExport, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
@@ -433,6 +478,14 @@ const App: React.FC = () => {
         }
         setTestDetails(importedData.testDetails);
         setQuestions(importedData.questions);
+        if (importedData.numberOfBooklets !== undefined) setNumberOfBooklets(Number(importedData.numberOfBooklets));
+        // restore UI settings if present
+        if (importedData.questionSpacing !== undefined) setQuestionSpacing(importedData.questionSpacing);
+        if (importedData.removeQuestionSpacing !== undefined) setRemoveQuestionSpacing(importedData.removeQuestionSpacing);
+        if (importedData.questionFontFamily) setQuestionFontFamily(importedData.questionFontFamily);
+        if (importedData.questionFontSize !== undefined) setQuestionFontSize(importedData.questionFontSize);
+        if (importedData.headingFontFamily) setHeadingFontFamily(importedData.headingFontFamily);
+        if (importedData.headingFontSize !== undefined) setHeadingFontSize(importedData.headingFontSize);
         alert(`Sınav detayları ve ${importedData.questions.length} soru başarıyla yüklendi.`);
   
       } catch (error) {
@@ -547,249 +600,7 @@ const handleImportGift = (event: React.ChangeEvent<HTMLInputElement>) => {
     reader.readAsText(file);
 };
 
-  const handleGenerateWord = async () => {
-    if (questions.length === 0) {
-        alert("Word dosyası oluşturmadan önce lütfen en az bir soru ekleyin.");
-        return;
-    }
-
-    try {
-        const booklets = [];
-        for (let i = 0; i < numberOfBooklets; i++) {
-            const bookletType = String.fromCharCode(65 + i);
-            booklets.push({
-                bookletType,
-                questions: shuffleQuestionsAndAnswers(JSON.parse(JSON.stringify(questions)))
-            });
-        }
-
-        const sections = [];
-
-        // Her kitapçık için section oluştur
-        for (const booklet of booklets) {
-            const children: any[] = [];
-
-            // Başlık bilgileri
-            children.push(
-                new Paragraph({
-                    text: `${testDetails.schoolYear} EĞİTİM - ÖĞRETİM YILI`,
-                    heading: HeadingLevel.HEADING_2,
-                    alignment: AlignmentType.CENTER,
-                }),
-                new Paragraph({
-                    text: `${testDetails.faculty.toUpperCase()}`,
-                    alignment: AlignmentType.CENTER,
-                }),
-                new Paragraph({
-                    text: `${testDetails.department.toUpperCase()}`,
-                    alignment: AlignmentType.CENTER,
-                }),
-                new Paragraph({
-                    text: `${testDetails.course.toUpperCase()} DERSİ ${testDetails.examType.toUpperCase()} SORULARI`,
-                    alignment: AlignmentType.CENTER,
-                    spacing: { after: 200 }
-                })
-            );
-
-            // Öğrenci bilgileri ve kitapçık
-            children.push(
-                new Paragraph({
-                    children: [
-                        new TextRun({ text: "AD-SOYAD: ", bold: true }),
-                        new TextRun("_____________________________"),
-                        new TextRun({ text: "     PUAN: ", bold: true }),
-                        new TextRun("_____________________________"),
-                    ],
-                    spacing: { after: 100 }
-                }),
-                new Paragraph({
-                    children: [
-                        new TextRun({ text: "NUMARA: ", bold: true }),
-                        new TextRun("_____________________________"),
-                    ],
-                    spacing: { after: 100 }
-                }),
-                new Paragraph({
-                    text: `${booklet.bookletType} KİTAPÇIĞI`,
-                    heading: HeadingLevel.HEADING_1,
-                    alignment: AlignmentType.CENTER,
-                    spacing: { after: 200 }
-                })
-            );
-
-            // Sorular - İki sütunlu tablo ile
-            const tableRows: TableRow[] = [];
-            
-            for (let i = 0; i < booklet.questions.length; i += 2) {
-                const leftQuestion = booklet.questions[i];
-                const rightQuestion = booklet.questions[i + 1];
-
-                const leftCell = new TableCell({
-                    children: [
-                        new Paragraph({
-                            children: [
-                                new TextRun({ text: `${i + 1}. `, bold: true }),
-                                new TextRun(stripHtml(leftQuestion.text))
-                            ],
-                            spacing: { after: 100 }
-                        }),
-                        ...leftQuestion.answers.filter(a => a.text.trim() !== '').map((ans, idx) => 
-                            new Paragraph({
-                                text: `${String.fromCharCode(97 + idx)}) ${ans.text}`,
-                                spacing: { after: 50 }
-                            })
-                        )
-                    ],
-                    width: { size: 50, type: WidthType.PERCENTAGE },
-                    margins: { top: 100, bottom: 100, left: 100, right: 100 }
-                });
-
-                const rightCell = rightQuestion ? new TableCell({
-                    children: [
-                        new Paragraph({
-                            children: [
-                                new TextRun({ text: `${i + 2}. `, bold: true }),
-                                new TextRun(stripHtml(rightQuestion.text))
-                            ],
-                            spacing: { after: 100 }
-                        }),
-                        ...rightQuestion.answers.filter(a => a.text.trim() !== '').map((ans, idx) => 
-                            new Paragraph({
-                                text: `${String.fromCharCode(97 + idx)}) ${ans.text}`,
-                                spacing: { after: 50 }
-                            })
-                        )
-                    ],
-                    width: { size: 50, type: WidthType.PERCENTAGE },
-                    margins: { top: 100, bottom: 100, left: 100, right: 100 }
-                }) : new TableCell({
-                    children: [new Paragraph("")],
-                    width: { size: 50, type: WidthType.PERCENTAGE }
-                });
-
-                tableRows.push(new TableRow({
-                    children: [leftCell, rightCell]
-                }));
-            }
-
-            const table = new Table({
-                rows: tableRows,
-                width: { size: 100, type: WidthType.PERCENTAGE },
-                borders: {
-                    top: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
-                    bottom: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
-                    left: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
-                    right: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
-                    insideHorizontal: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
-                    insideVertical: { style: BorderStyle.SINGLE, size: 10, color: "CCCCCC" }
-                }
-            });
-
-            children.push(table);
-
-            sections.push({
-                properties: {
-                    page: {
-                        margin: { top: 1000, right: 1000, bottom: 1000, left: 1000 }
-                    }
-                },
-                children
-            });
-        }
-
-        // Cevap Anahtarı Sayfası
-        const answerKeyChildren: any[] = [
-            new Paragraph({
-                text: `${testDetails.course.toUpperCase()} DERSİ CEVAP ANAHTARI`,
-                heading: HeadingLevel.HEADING_1,
-                alignment: AlignmentType.CENTER,
-                spacing: { after: 400 }
-            })
-        ];
-
-        // Her kitapçık için cevap anahtarı tablosu oluştur
-        for (const booklet of booklets) {
-            answerKeyChildren.push(
-                new Paragraph({
-                    text: `${booklet.bookletType} KİTAPÇIĞI`,
-                    heading: HeadingLevel.HEADING_2,
-                    spacing: { before: 300, after: 200 }
-                })
-            );
-
-            // Cevapları 4 sütunlu tablo olarak düzenle
-            const answerRows: TableRow[] = [];
-            const questionsPerRow = 4;
-            
-            for (let i = 0; i < booklet.questions.length; i += questionsPerRow) {
-                const cells: TableCell[] = [];
-                
-                for (let j = 0; j < questionsPerRow; j++) {
-                    const qIndex = i + j;
-                    if (qIndex < booklet.questions.length) {
-                        const q = booklet.questions[qIndex];
-                        cells.push(new TableCell({
-                            children: [
-                                new Paragraph({
-                                    children: [
-                                        new TextRun({ text: `${qIndex + 1}. `, bold: true }),
-                                        new TextRun({ text: String.fromCharCode(65 + q.correctAnswerIndex), bold: true, size: 24 })
-                                    ]
-                                })
-                            ],
-                            width: { size: 25, type: WidthType.PERCENTAGE },
-                            margins: { top: 100, bottom: 100, left: 200, right: 200 }
-                        }));
-                    } else {
-                        cells.push(new TableCell({
-                            children: [new Paragraph("")],
-                            width: { size: 25, type: WidthType.PERCENTAGE }
-                        }));
-                    }
-                }
-                
-                answerRows.push(new TableRow({ children: cells }));
-            }
-
-            const answerTable = new Table({
-                rows: answerRows,
-                width: { size: 100, type: WidthType.PERCENTAGE },
-                borders: {
-                    top: { style: BorderStyle.SINGLE, size: 10, color: "CCCCCC" },
-                    bottom: { style: BorderStyle.SINGLE, size: 10, color: "CCCCCC" },
-                    left: { style: BorderStyle.SINGLE, size: 10, color: "CCCCCC" },
-                    right: { style: BorderStyle.SINGLE, size: 10, color: "CCCCCC" },
-                    insideHorizontal: { style: BorderStyle.SINGLE, size: 5, color: "EEEEEE" },
-                    insideVertical: { style: BorderStyle.SINGLE, size: 5, color: "EEEEEE" }
-                }
-            });
-
-            answerKeyChildren.push(answerTable);
-        }
-
-        sections.push({
-            properties: {
-                page: {
-                    margin: { top: 1000, right: 1000, bottom: 1000, left: 1000 }
-                }
-            },
-            children: answerKeyChildren
-        });
-
-        const doc = new Document({
-            sections
-        });
-
-        const blob = await Packer.toBlob(doc);
-        saveAs(blob, `test_${testDetails.course.replace(/\s/g, '_')}.docx`);
-        alert('Word dosyası başarıyla oluşturuldu!');
-
-    } catch (error) {
-        console.error("Word dosyası oluşturma hatası:", error);
-        alert("Word dosyası oluşturulurken bir hata oluştu. Lütfen konsolu kontrol edin.");
-    }
-};
-
+  
   /**
  * Word için optik form içeriği oluşturur (Görsel format)
  * @param bookletType - Kitapçık harfi (A, B, C, D)
@@ -808,25 +619,18 @@ const generateOpticalFormContent = (
   children.push(
     new Paragraph({
       children: [
-        new TextRun({ text: "AD-SOYAD: ", bold: true }),
-        new TextRun("_____________________________")
+        new TextRun({ text: "AD-SOYAD: ", bold: true, size: questionFontSize*2, font: questionFontFamily  }),
+        new TextRun({ text: "_____________________________", size: questionFontSize*2, font: questionFontFamily })
       ],
       spacing: { after: 100 }
     }),
     new Paragraph({
       children: [
-        new TextRun({ text: "NUMARA: ", bold: true }),
-        new TextRun("___________________________")
+        new TextRun({ text: "NUMARA:  ", bold: true, size: questionFontSize*2, font: questionFontFamily }),
+        new TextRun({ text: "_____________________________", size: questionFontSize*2, font: questionFontFamily })
       ],
       spacing: { after: 100 }
     }),
-    new Paragraph({
-      children: [
-        new TextRun({ text: "PUAN: ", bold: true }),
-        new TextRun("_____________________________")
-      ],
-      spacing: { after: 300 }
-    })
   );
 
   // CEVAP TABLOSU - 2 SÜTUNLU DÜZENİ
@@ -850,7 +654,7 @@ const generateOpticalFormContent = (
       ...['A', 'B', 'C', 'D', 'E'].map(letter => 
         new TableCell({
           children: [new Paragraph({ 
-            children: [new TextRun({ text: letter, bold: true })],
+            children: [new TextRun({ text: letter, bold: true , size: questionFontSize*2, font: questionFontFamily})],
             alignment: AlignmentType.CENTER
           })],
           width: { size: 8.5, type: WidthType.PERCENTAGE },
@@ -887,7 +691,7 @@ const generateOpticalFormContent = (
       ...['A', 'B', 'C', 'D', 'E'].map(letter => 
         new TableCell({
           children: [new Paragraph({ 
-            children: [new TextRun({ text: letter, bold: true })],
+            children: [new TextRun({ text: letter, bold: true, size: questionFontSize*2, font: questionFontFamily })],
             alignment: AlignmentType.CENTER
           })],
           width: { size: 8.5, type: WidthType.PERCENTAGE },
@@ -915,7 +719,7 @@ const generateOpticalFormContent = (
       new TableCell({
         children: [
           new Paragraph({ 
-            children: [new TextRun({ text: `${leftQuestionNum}`, bold: true })],
+            children: [new TextRun({ text: `${leftQuestionNum}`, bold: true, size: questionFontSize*2, font: questionFontFamily })],
             alignment: AlignmentType.CENTER
           })
         ],
@@ -935,7 +739,7 @@ const generateOpticalFormContent = (
         new TableCell({
           children: [
             new Paragraph({
-              text: "O",
+                children: [new TextRun({ text: "O", size: questionFontSize*2, font: questionFontFamily })],
               alignment: AlignmentType.CENTER
             })
           ],
@@ -971,7 +775,7 @@ const generateOpticalFormContent = (
         new TableCell({
           children: [
             new Paragraph({ 
-              children: [new TextRun({ text: `${rightQuestionNum}`, bold: true })],
+              children: [new TextRun({ text: `${rightQuestionNum}`, bold: true, size: questionFontSize*2, font: questionFontFamily })],
               alignment: AlignmentType.CENTER
             })
           ],
@@ -991,7 +795,7 @@ const generateOpticalFormContent = (
           new TableCell({
             children: [
               new Paragraph({
-                text: "O",
+                children: [new TextRun({ text: "O", size: questionFontSize*2, font: questionFontFamily })],
                 alignment: AlignmentType.CENTER
               })
             ],
@@ -1073,23 +877,23 @@ const generateOpticalFormContent = (
         for (const booklet of booklets) {
             const children: any[] = [];
 
-            // Başlık bilgileri
+            // Başlık bilgileri (font/boyut ayarlarını uygula)
             children.push(
                 new Paragraph({
-                    text: `${testDetails.schoolYear} EĞİTİM - ÖĞRETİM YILI`,
-                    /*heading: HeadingLevel.HEADING_2,*/
+                    children: [new TextRun({ text: `${testDetails.schoolYear} EĞİTİM - ÖĞRETİM YILI`, size: headingFontSize*2, font: headingFontFamily })],
+                    heading: HeadingLevel.HEADING_2,
                     alignment: AlignmentType.CENTER,
                 }),
                 new Paragraph({
-                    text: `${testDetails.faculty.toUpperCase()}`,
+                    children: [new TextRun({ text: `${testDetails.faculty.toUpperCase()}`, size: headingFontSize*2, font: headingFontFamily })],
                     alignment: AlignmentType.CENTER,
                 }),
                 new Paragraph({
-                    text: `${testDetails.department.toUpperCase()}`,
+                    children: [new TextRun({ text: `${testDetails.department.toUpperCase()}`, size: headingFontSize*2, font: headingFontFamily })],
                     alignment: AlignmentType.CENTER,
                 }),
                 new Paragraph({
-                    text: `${testDetails.course.toUpperCase()} DERSİ ${testDetails.examType.toUpperCase()} SORULARI`,
+                    children: [new TextRun({ text: `${testDetails.course.toUpperCase()} DERSİ ${testDetails.examType.toUpperCase()} SORULARI`, size: headingFontSize*2, font: headingFontFamily })],
                     alignment: AlignmentType.CENTER,
                     spacing: { after: 200 }
                 })
@@ -1099,26 +903,24 @@ const generateOpticalFormContent = (
             children.push(
                 new Paragraph({
                     children: [
-                        new TextRun({ text: "AD-SOYAD: ", bold: true }),
-                        new TextRun("_____________________________"),
-                        new TextRun({ text: "     PUAN: ", bold: true }),
-                        new TextRun("_____________________________"),
+                        new TextRun({ text: "AD-SOYAD:\t", bold: true, size: questionFontSize*2, font: questionFontFamily }),
+                        new TextRun({ text: "_____________________________", size: questionFontSize*2, font: questionFontFamily }),
                     ],
                     spacing: { after: 100 }
                 }),
                 new Paragraph({
                     children: [
-                        new TextRun({ text: "NUMARA: ", bold: true }),
-                        new TextRun("_____________________________"),
+                        new TextRun({ text: "NUMARA:\t", bold: true, size: questionFontSize*2, font: questionFontFamily }),
+                        new TextRun({ text: "_____________________________", size: questionFontSize*2, font: questionFontFamily }),
                     ],
                     spacing: { after: 100 }
                 }),
                 new Paragraph({
-                    text: `${booklet.bookletType} KİTAPÇIĞI`,
-                    /*heading: HeadingLevel.HEADING_1,*/
+                    children: [new TextRun({ text: `${booklet.bookletType} KİTAPÇIĞI`, size: headingFontSize*2, font: headingFontFamily })],
+                    heading: HeadingLevel.HEADING_1,
                     alignment: AlignmentType.CENTER,
                     spacing: { after: 400 }
-                })
+                }),
             );
 
             // Sorular - Native iki sütun kullanarak
@@ -1129,23 +931,27 @@ const generateOpticalFormContent = (
                 
                 questionLines.forEach((line, lineIndex) => {
                     if (lineIndex === 0) {
-                        // İlk satırda soru numarasını ekle
+                        // İlk satırda soru numarasını ekle - sayfa sonuna bölünmemesi için keepNext ve keepLines
                         children.push(
                             new Paragraph({
                                 children: [
-                                    new TextRun({ text: `${index + 1}. `, bold: true }),
-                                    new TextRun({ text: line.trim() })
+                                    new TextRun({ text: `${index + 1}. `, bold: true, size: questionFontSize*2, font: questionFontFamily }),
+                                    new TextRun({ text: line.trim(), size: questionFontSize*2, font: questionFontFamily })
                                 ],
-                                spacing: { after: 0 }
+                                spacing: { after: 0 },
+                                keepNext: true,
+                                keepLines: true
                             })
                         );
                     } else {
                         // Diğer satırları girintili olarak ekle
                         children.push(
                             new Paragraph({
-                                text: line.trim(),
+                                children: [new TextRun({ text: line.trim(), size: questionFontSize*2, font: questionFontFamily })],
                                 spacing: { after: 0 },
                                 indent: { left: 200 },
+                                keepNext: true,
+                                keepLines: true
                             })
                         );
                     }
@@ -1155,20 +961,28 @@ const generateOpticalFormContent = (
                 q.answers.filter(a => a.text.trim() !== '').forEach((ans, idx) => {
                     children.push(
                         new Paragraph({
-                            text: `${String.fromCharCode(97 + idx)}) ${ans.text}`,
+                            children: [
+                                new TextRun({ text: `${String.fromCharCode(97 + idx)}) `, size: questionFontSize*2, font: questionFontFamily }),
+                                new TextRun({ text: ans.text, size: questionFontSize*2, font: questionFontFamily })
+                            ],
                             spacing: { after: 0 },
-                            indent: { left: 200 }
+                            indent: { left: 200 },
+                            keepNext: true,
+                            keepLines: true
                         })
                     );
                 });
 
-                // Sorular arasında boşluk
-                children.push(
-                    new Paragraph({
-                        text: "",
-                        spacing: { after: 0 }
-                    })
-                );
+                // Sorular arasında boşluk (keepNext kaldır, son paragraf) - kullanıcı opsiyonuna göre ekle
+                //if (!removeQuestionSpacing) {
+                    children.push(
+                        new Paragraph({
+                            style: "soruarasi",
+                            text: "",
+                            spacing: { after: questionSpacing }
+                        })
+                    );
+                //}
             });
 
             // Her kitapçığın sonuna optik formu ekle (aynı section içinde)
@@ -1194,86 +1008,97 @@ const generateOpticalFormContent = (
             });
         }
 
-        // Cevap Anahtarı Sayfası
+        // Cevap Anahtarı Sayfası - Her satır soru numarası, sonrasında kitapçık gruplarının cevapları
         const answerKeyChildren: any[] = [
-            new Paragraph({
-                text: `${testDetails.course.toUpperCase()} DERSİ CEVAP ANAHTARI`,
-                heading: HeadingLevel.HEADING_1,
-                alignment: AlignmentType.CENTER,
-                spacing: { after: 400 }
-            })
+          new Paragraph({
+            text: `${testDetails.course.toUpperCase()} DERSİ CEVAP ANAHTARI`,
+            heading: HeadingLevel.HEADING_1,
+            alignment: AlignmentType.CENTER,
+            spacing: { after: 400 }
+          })
         ];
 
-        // Her kitapçık için cevap anahtarı tablosu oluştur
-        for (const booklet of booklets) {
-            answerKeyChildren.push(
-                new Paragraph({
-                    text: `${booklet.bookletType} KİTAPÇIĞI`,
-                    heading: HeadingLevel.HEADING_2,
-                    spacing: { before: 300, after: 200 }
-                })
-            );
+        if (booklets.length > 0) {
+          // Başlık satırı: # | A Grubu | B Grubu | ...
+          const headerCells: TableCell[] = [];
+          const firstColSize = 10; // yüzde
+          const otherColSize = Math.floor((100 - firstColSize) / booklets.length);
 
-            // Cevapları 4 sütunlu tablo olarak düzenle
-            const answerRows: TableRow[] = [];
-            const questionsPerRow = 4;
-            
-            for (let i = 0; i < booklet.questions.length; i += questionsPerRow) {
-                const cells: TableCell[] = [];
-                
-                for (let j = 0; j < questionsPerRow; j++) {
-                    const qIndex = i + j;
-                    if (qIndex < booklet.questions.length) {
-                        const q = booklet.questions[qIndex];
-                        cells.push(new TableCell({
-                            children: [
-                                new Paragraph({
-                                    children: [
-                                        new TextRun({ text: `${qIndex + 1}. `, bold: true }),
-                                        new TextRun({ text: String.fromCharCode(65 + q.correctAnswerIndex), bold: true, size: 24 })
-                                    ]
-                                })
-                            ],
-                            width: { size: 25, type: WidthType.PERCENTAGE },
-                            margins: { top: 100, bottom: 100, left: 200, right: 200 }
-                        }));
-                    } else {
-                        cells.push(new TableCell({
-                            children: [new Paragraph("")],
-                            width: { size: 25, type: WidthType.PERCENTAGE }
-                        }));
-                    }
-                }
-                
-                answerRows.push(new TableRow({ children: cells }));
+          headerCells.push(new TableCell({
+            children: [new Paragraph({ children: [new TextRun({ text: '#', bold: true })], alignment: AlignmentType.CENTER })],
+            width: { size: firstColSize, type: WidthType.PERCENTAGE }
+          }));
+
+          for (const b of booklets) {
+            headerCells.push(new TableCell({
+              children: [new Paragraph({ children: [new TextRun({ text: `${b.bookletType} Grubu`, bold: true })], alignment: AlignmentType.CENTER })],
+              width: { size: otherColSize, type: WidthType.PERCENTAGE }
+            }));
+          }
+
+          const rows: TableRow[] = [];
+          rows.push(new TableRow({ children: headerCells }));
+
+          // Satır sayısını en uzun kitapçığa göre al (genelde hepsi eşit)
+          const totalQuestions = Math.max(...booklets.map(b => b.questions.length));
+
+          for (let qi = 0; qi < totalQuestions; qi++) {
+            const cells: TableCell[] = [];
+            cells.push(new TableCell({
+              children: [new Paragraph({ text: String(qi + 1), alignment: AlignmentType.CENTER })],
+              width: { size: firstColSize, type: WidthType.PERCENTAGE }
+            }));
+
+            for (const b of booklets) {
+              let letter = '';
+              const q = b.questions[qi];
+              if (q && typeof q.correctAnswerIndex === 'number' && q.correctAnswerIndex >= 0) {
+                letter = String.fromCharCode(65 + q.correctAnswerIndex);
+              }
+              cells.push(new TableCell({
+                children: [new Paragraph({ text: letter, alignment: AlignmentType.CENTER })],
+                width: { size: otherColSize, type: WidthType.PERCENTAGE }
+              }));
             }
 
-            const answerTable = new Table({
-                rows: answerRows,
-                width: { size: 100, type: WidthType.PERCENTAGE },
-                borders: {
-                    top: { style: BorderStyle.SINGLE, size: 10, color: "CCCCCC" },
-                    bottom: { style: BorderStyle.SINGLE, size: 10, color: "CCCCCC" },
-                    left: { style: BorderStyle.SINGLE, size: 10, color: "CCCCCC" },
-                    right: { style: BorderStyle.SINGLE, size: 10, color: "CCCCCC" },
-                    insideHorizontal: { style: BorderStyle.SINGLE, size: 5, color: "EEEEEE" },
-                    insideVertical: { style: BorderStyle.SINGLE, size: 5, color: "EEEEEE" }
-                }
-            });
+            rows.push(new TableRow({ children: cells }));
+          }
 
-            answerKeyChildren.push(answerTable);
+          const answerTable = new Table({
+            rows,
+            width: { size: 100, type: WidthType.PERCENTAGE },
+            borders: {
+              top: { style: BorderStyle.SINGLE, size: 10, color: "CCCCCC" },
+              bottom: { style: BorderStyle.SINGLE, size: 10, color: "CCCCCC" },
+              left: { style: BorderStyle.SINGLE, size: 10, color: "CCCCCC" },
+              right: { style: BorderStyle.SINGLE, size: 10, color: "CCCCCC" },
+              insideHorizontal: { style: BorderStyle.SINGLE, size: 5, color: "EEEEEE" },
+              insideVertical: { style: BorderStyle.SINGLE, size: 5, color: "EEEEEE" }
+            }
+          });
+
+          answerKeyChildren.push(answerTable);
         }
 
         sections.push({
-            properties: {
-                page: {
-                    margin: { top: 1000, right: 1000, bottom: 1000, left: 1000 }
-                }
-            },
-            children: answerKeyChildren
+          properties: {
+            page: {
+              margin: { top: 1000, right: 1000, bottom: 1000, left: 1000 }
+            }
+          },
+          children: answerKeyChildren
         });
 
         const doc = new Document({
+            styles:{paragraphStyles:[{
+                id: "soruarasi",
+                name: "Soru Arası Boşluk",
+                basedOn: "Normal",
+                next: "Normal",
+                run: {
+                    size: 2,
+                },
+            },]},
             sections
         });
 
@@ -1493,22 +1318,78 @@ const generateOpticalFormContent = (
                         <option value={4}>4 (A, B, C, D)</option>
                     </select>
                   </div>
-                  <div>
-                    <label htmlFor="studentNumberLength" className="block text-sm font-medium text-slate-300">Öğrenci No Karakter Sayısı</label>
-                    <select 
-                      id="studentNumberLength" 
-                      name="studentNumberLength" 
-                      value={testDetails.studentNumberLength ?? 10} 
-                      onChange={(e) => setTestDetails({...testDetails, studentNumberLength: parseInt(e.target.value)})}
-                      className="mt-1 block w-full bg-slate-700 border border-slate-600 rounded-md p-2 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition"
-                    >
-                      <option value={6}>6 Karakter</option>
-                      <option value={8}>8 Karakter</option>
-                      <option value={10}>10 Karakter</option>
-                      <option value={12}>12 Karakter</option>
-                    </select>
-                  </div>
+                                    <div>
+                                        <label htmlFor="questionSpacing" className="block text-sm font-medium text-slate-300">Sorular Arası Boşluk</label>
+                                        <div className="mt-1 flex items-center gap-2">
+                                            <input
+                                                id="questionSpacing"
+                                                type="range"
+                                                min={0}
+                                                max={800}
+                                                step={10}
+                                                value={questionSpacing}
+                                                onChange={(e) => setQuestionSpacing(parseInt(e.target.value || '0'))}
+                                                className="w-full"
+                                            />
+                                            <input
+                                                type="number"
+                                                value={questionSpacing}
+                                                onChange={(e) => setQuestionSpacing(parseInt(e.target.value || '0'))}
+                                                className="w-20 bg-slate-700 border border-slate-600 rounded-md p-2 text-sm"
+                                            />
+                                        </div>
+                                        <p className="text-sm text-slate-400 mt-1">Word çıktısında sorular arasındaki boşluğu ayarlar (twips-benzeri birim, varsayılan 100).</p>
+                                    </div>
+                                    <div className="md:col-span-3 lg:col-span-3">
+                                        <label className="block text-sm font-medium text-slate-300">Yazı Tipi ve Boyutu</label>
+                                        <div className="mt-2 grid grid-cols-2 gap-3">
+                                                                                        <div>
+                                                                                                <div className="text-sm text-slate-300">Soru Yazı Tipi</div>
+                                                                                                <FontSelector
+                                                                                                    value={questionFontFamily}
+                                                                                                    onChange={(v) => setQuestionFontFamily(v)}
+                                                                                                    options={[
+                                                                                                        'Arial','Arial Black','Bahnschrift','Calibri','Cambria','Candara','Comic Sans MS','Consolas','Constantia','Corbel','Courier New','Didot','Fira Sans','Franklin Gothic Medium','Garamond','Georgia','Helvetica','Impact','Liberation Sans','Leelawadee UI','Lucida Console','Lucida Sans Unicode','Microsoft Sans Serif','Monaco','MS Gothic','MS Mincho','Palatino Linotype','Segoe UI','Tahoma','Times New Roman','Trebuchet MS','Verdana','Century Gothic','Droid Sans','Open Sans','Roboto','Montserrat','Noto Sans','PT Sans','Raleway','Lato','Oswald','Source Sans Pro','Ubuntu','Victor Mono','Work Sans','Gill Sans','Brush Script MT','Optima','Cambria Math'
+                                                                                                    ]}
+                                                                                                    placeholder="Font adı yazın veya seçin"
+                                                                                                />
+                                                                                        </div>
+                                            <div>
+                                                <div className="text-sm text-slate-300">Soru Boyutu</div>
+                                                <input type="number" value={questionFontSize} onChange={(e) => setQuestionFontSize(parseInt(e.target.value||'0'))} className="mt-1 block w-full bg-slate-700 border border-slate-600 rounded-md p-2 text-sm" />
+                                            </div>
+                                                                                        <div>
+                                                                                                <div className="text-sm text-slate-300">Başlık Yazı Tipi</div>
+                                                                                                <FontSelector
+                                                                                                    value={headingFontFamily}
+                                                                                                    onChange={(v) => setHeadingFontFamily(v)}
+                                                                                                    options={[
+                                                                                                        'Arial','Arial Black','Bahnschrift','Calibri','Cambria','Candara','Comic Sans MS','Consolas','Constantia','Corbel','Courier New','Didot','Fira Sans','Franklin Gothic Medium','Garamond','Georgia','Helvetica','Impact','Liberation Sans','Leelawadee UI','Lucida Console','Lucida Sans Unicode','Microsoft Sans Serif','Monaco','MS Gothic','MS Mincho','Palatino Linotype','Segoe UI','Tahoma','Times New Roman','Trebuchet MS','Verdana','Century Gothic','Droid Sans','Open Sans','Roboto','Montserrat','Noto Sans','PT Sans','Raleway','Lato','Oswald','Source Sans Pro','Ubuntu','Victor Mono','Work Sans','Gill Sans','Brush Script MT','Optima','Cambria Math'
+                                                                                                    ]}
+                                                                                                    placeholder="Font adı yazın veya seçin"
+                                                                                                />
+                                                                                        </div>
+                                            <div>
+                                                <div className="text-sm text-slate-300">Başlık Boyutu</div>
+                                                <input type="number" value={headingFontSize} onChange={(e) => setHeadingFontSize(parseInt(e.target.value||'0'))} className="mt-1 block w-full bg-slate-700 border border-slate-600 rounded-md p-2 text-sm" />
+                                            </div>
+                                        </div>
+                                        <p className="text-sm text-slate-400 mt-1">Bu ayarlar Word çıktısında soru metinleri ve başlıklar için kullanılır.</p>
+                                    </div>
+                                    {/* fontList removed — using FontSelector component instead */}
               </div>
+              
+                
+            <div className="text-center py-4">
+                <button 
+                    onClick={handleGenerateWordColumns} 
+                    disabled={questions.length === 0}
+                    className="w-full max-w-sm px-8 py-4 rounded-lg bg-indigo-600 hover:bg-indigo-500 font-bold text-xl transition disabled:bg-slate-600 disabled:cursor-not-allowed flex items-center justify-center gap-3 mx-auto"
+                >
+                    <DownloadIcon className="w-6 h-6" /> Word Oluştur
+                </button>
+                {questions.length === 0 && <p className="text-sm text-yellow-400 mt-2">Word dosyası oluşturmak için en az bir soru ekleyin.</p>}
+            </div>
             </section>
 
             <section className="bg-slate-800 p-6 rounded-lg shadow-lg">
@@ -1529,6 +1410,15 @@ const generateOpticalFormContent = (
                             <UploadIcon className="w-4 h-4"/> Yükle (GIFT)
                             <input type="file" accept=".txt" onChange={handleImportGift} className="hidden" />
                         </label>
+
+                <button
+                  onClick={deleteAllQuestions}
+                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                >
+                  Tüm Soruları Sil
+                </button>
+
+
                         <button onClick={openEditorForNew} className="flex items-center gap-2 px-4 py-2 rounded-md bg-cyan-600 hover:bg-cyan-500 font-semibold transition">
                             <PlusIcon className="w-5 h-5"/> Soru Ekle
                         </button>
