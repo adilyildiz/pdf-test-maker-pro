@@ -1,0 +1,2439 @@
+{
+  "testDetails": {
+    "schoolYear": "2025 - 2026",
+    "faculty": "BİLGİSAYAR VE BİLİŞİM BİLİMLERİ FAKÜLTESİ",
+    "department": "DİJİTAL OYUN TASARIMI BÖLÜMÜ",
+    "course": "TEMEL BİLGİ TEKNOLOJİLERİ",
+    "examType": "ÇOKTAN SEÇMELİ TEST SINAVI",
+    "booklet": "A",
+    "studentNumberLength": 10
+  },
+  "questions": [
+    {
+      "id": "gift-1767078845157-0-a2h",
+      "text": "“ ……… sayılar, rakamlar, sözcükler, metinler, resimler, olaylar vb. biçiminde temsil edilen ham gerçekliklerdir.”<br>Cümlede boş bırakılan yere aşağıdakilerden hangisi getirilmelidir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Bilgi"
+        },
+        {
+          "text": "Veri"
+        },
+        {
+          "text": "İfade"
+        },
+        {
+          "text": "Teknoloji"
+        },
+        {
+          "text": "İşlem"
+        }
+      ],
+      "correctAnswerIndex": 1
+    },
+    {
+      "id": "gift-1767078845157-1-5zt",
+      "text": "Aşağıdakilerden hangisi veri işleme türlerinden biri değildir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "El yordamı"
+        },
+        {
+          "text": "Mekanik"
+        },
+        {
+          "text": "Elektromekanik"
+        },
+        {
+          "text": "Elektronik"
+        },
+        {
+          "text": "Kronolojik"
+        }
+      ],
+      "correctAnswerIndex": 4
+    },
+    {
+      "id": "gift-1767078845157-2-vce",
+      "text": "Aşağıdakilerden hangisi 30 sayısının on altılık tabandaki karşılığıdır?",
+      "image": null,
+      "answers": [
+        {
+          "text": "1A"
+        },
+        {
+          "text": "1B"
+        },
+        {
+          "text": "1C"
+        },
+        {
+          "text": "1D"
+        },
+        {
+          "text": "1E"
+        }
+      ],
+      "correctAnswerIndex": 4
+    },
+    {
+      "id": "gift-1767078845157-3-0vj",
+      "text": "İkilik tabandaki 1000011 sayısının onluk tabandaki karşılığı aşağıdakilerden hangisidir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "76"
+        },
+        {
+          "text": "67"
+        },
+        {
+          "text": "74"
+        },
+        {
+          "text": "47"
+        },
+        {
+          "text": "80"
+        }
+      ],
+      "correctAnswerIndex": 1
+    },
+    {
+      "id": "gift-1767078845157-4-cu7",
+      "text": "“Üzerinde çeşitli aygıtlar arasında veri iletimini sağlayan veri yollarını ve transistör, çip, entegre gibi bileşenleri barındıran plakaya …………………........... denir”<br>Cümlede boş bırakılan yere aşağıdakilerden hangisi getirilmelidir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "RAM"
+        },
+        {
+          "text": "Anakart"
+        },
+        {
+          "text": "ISA"
+        },
+        {
+          "text": "CPU"
+        },
+        {
+          "text": "AGP"
+        }
+      ],
+      "correctAnswerIndex": 1
+    },
+    {
+      "id": "gift-1767078845157-5-xxa",
+      "text": "Aşağıdakilerden hangisi büyük miktarlardaki verileri depolayıp bu verilere hızlı bir erişim sağlanmasına ve bu verilerden raporlar hazırlanmasına imkân veren yazılımlardır?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Hesap tablosu yazılımları"
+        },
+        {
+          "text": "İşletim sistemi yazılımları"
+        },
+        {
+          "text": "Veri tabanı yönetim sistemleri"
+        },
+        {
+          "text": "Kelime işlem yazılımları"
+        },
+        {
+          "text": "Sunum yazılımları"
+        }
+      ],
+      "correctAnswerIndex": 2
+    },
+    {
+      "id": "gift-1767078845157-6-fq1",
+      "text": "Kullanıcıların bilgisayarı kullanabilmeleri için gerekli olan tüm programlara verilen genel ad aşağıdakilerden hangisidir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Donanım"
+        },
+        {
+          "text": "Derleyici"
+        },
+        {
+          "text": "Yorumlayıcı"
+        },
+        {
+          "text": "Yazılım"
+        },
+        {
+          "text": "Düzenleyici"
+        }
+      ],
+      "correctAnswerIndex": 3
+    },
+    {
+      "id": "gift-1767078845157-7-9u3",
+      "text": "I. Ubuntu<br>II. Debian<br>III. Windows<br>Yukarıdakilerden hangisi ya da hangileri açık kaynak kodlu işletim sistemlerindendir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Yalnız I"
+        },
+        {
+          "text": "Yalnız II"
+        },
+        {
+          "text": "I ve II"
+        },
+        {
+          "text": "II ve III"
+        },
+        {
+          "text": "I, II ve III"
+        }
+      ],
+      "correctAnswerIndex": 2
+    },
+    {
+      "id": "gift-1767078845157-8-h9m",
+      "text": "Microsoft Excel programı aşağıdaki hangi üretkenlik yazılımı kategorisindedir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Kelime işlem"
+        },
+        {
+          "text": "Veri tabanı"
+        },
+        {
+          "text": "Sunum"
+        },
+        {
+          "text": "Hesap tablosu"
+        },
+        {
+          "text": "Çizim"
+        }
+      ],
+      "correctAnswerIndex": 3
+    },
+    {
+      "id": "gift-1767078845157-9-cgy",
+      "text": "I. Dosya&nbsp;<br>II. Sürücü<br>III. Klasör<br>Yukarıdakilerin hiyerarşik olarak sıralanışı hangisinde doğru olarak verilmiştir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "II, III ve I"
+        },
+        {
+          "text": "II, I ve III"
+        },
+        {
+          "text": "I, II ve III"
+        },
+        {
+          "text": "I, III ve II"
+        },
+        {
+          "text": "III, II ve I"
+        }
+      ],
+      "correctAnswerIndex": 0
+    },
+    {
+      "id": "gift-1767078845157-10-wr7",
+      "text": "Aşağıdakilerden hangisinde bilgisayarda arama yaparken son üç harfi “AÖF”, uzantısı “.docx” olan dosyanın arama kriteri doğru olarak verilmiştir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "ATAAÖF.docx"
+        },
+        {
+          "text": "AÖF.docx"
+        },
+        {
+          "text": "*AÖF.docx"
+        },
+        {
+          "text": "AÖF*.docx"
+        },
+        {
+          "text": "AÖF.***"
+        }
+      ],
+      "correctAnswerIndex": 2
+    },
+    {
+      "id": "gift-1767078845157-11-bsq",
+      "text": "Aşağıdakilerden hangisi ekranın anlık görüntüsünü panoya kopyalamak için kullanılan tuştur?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Scroll Lock"
+        },
+        {
+          "text": "Space Bar"
+        },
+        {
+          "text": "Print Screen"
+        },
+        {
+          "text": "Back Space"
+        },
+        {
+          "text": "Pause / Break"
+        }
+      ],
+      "correctAnswerIndex": 2
+    },
+    {
+      "id": "gift-1767078845157-12-rhg",
+      "text": "I. Nesneleri doğrudan silmek için Shift+Delete tuş bileşeni kullanılır.<br>II. Geri dönüşüm kutusuna gönderilen nesneler bilgisayardan tamamen silinir.&nbsp;<br>III. Geri dönüşüm kutusunun disk kullanım alanı değiştirilemez.&nbsp;<br>Geri dönüşüm kutusuna ilişkin yukarıdaki ifadelerden hangisi ya da hangileri doğrudur?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Yalnız I"
+        },
+        {
+          "text": "Yalnız II"
+        },
+        {
+          "text": "I ve II"
+        },
+        {
+          "text": "II ve III"
+        },
+        {
+          "text": "I, II ve III"
+        }
+      ],
+      "correctAnswerIndex": 0
+    },
+    {
+      "id": "gift-1767078845157-13-3el",
+      "text": "Açık olan ve çalışan program veya uygulamalar ………….. üzerinde düğme şeklinde görünmektedir. Cümlede boş bırakılan yere aşağıdakilerden hangisi getirilmelidir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "adres çubuğu"
+        },
+        {
+          "text": "görev çubuğu"
+        },
+        {
+          "text": "durum çubuğu"
+        },
+        {
+          "text": "bildirim alanı"
+        },
+        {
+          "text": "sütun başlıkları"
+        }
+      ],
+      "correctAnswerIndex": 1
+    },
+    {
+      "id": "gift-1767078845157-14-uyj",
+      "text": "Aşağıdakilerden hangisi nesne isimlendirmesi ile ilgili yanlıştır?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Fare kullanılarak yeniden isimlendirme çerçevesi aktifleştirilebilir."
+        },
+        {
+          "text": "Nesne kullanımda iken ismi değiştirilebilir."
+        },
+        {
+          "text": "“ ? \\ karakterleri kullanılmaz."
+        },
+        {
+          "text": "F2 tuşu ile yeniden isimlendirme çerçevesi aktifleştirilebilir."
+        },
+        {
+          "text": "Yeni nesne ismini onaylamak için ENTER tuşu kullanılır."
+        }
+      ],
+      "correctAnswerIndex": 1
+    },
+    {
+      "id": "gift-1767078845157-15-2q3",
+      "text": "I. Delete tuşu kullanılabilir.&nbsp;<br>II. Sağ tuş menüsündeki sil seçeneği kullanılabilir.&nbsp;<br>III. Shift+Delete tuş bileşeni kullanılabilir.&nbsp;<br>Yukarıdakilerden hangisi ya da hangileri nesne silme işleminde, nesneyi geri dönüşüm kutusuna göndermeden silme işlemi için kullanılabilir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Yalnız I"
+        },
+        {
+          "text": "Yalnız II"
+        },
+        {
+          "text": "Yalnız III"
+        },
+        {
+          "text": "II ve III"
+        },
+        {
+          "text": "I, II ve III"
+        }
+      ],
+      "correctAnswerIndex": 2
+    },
+    {
+      "id": "gift-1767078845157-16-ivo",
+      "text": "…………………… bilgisayar sistemindeki tüm yazılım ve donanım birimlerine yönelik ayar yapma imkanı tanır.<br>Cümlede boş bırakılan yere aşağıdakilerden hangisi getirilmelidir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Denetim Masası"
+        },
+        {
+          "text": "Belgeler"
+        },
+        {
+          "text": "Donatılar"
+        },
+        {
+          "text": "Aygıtlar ve Yazıcılar"
+        },
+        {
+          "text": "Yardım ve Destek"
+        }
+      ],
+      "correctAnswerIndex": 0
+    },
+    {
+      "id": "gift-1767078845157-17-xpa",
+      "text": "Aşağıdakilerden hangisi Denetim Masasındaki Bölge bileşeni yardımıyla yapılan ayarlardan değildir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Geçerli konum bilgisini belirleme"
+        },
+        {
+          "text": "Para birimi simgesini değiştirme"
+        },
+        {
+          "text": "Sayı görüntülemedeki ondalık ayracı belirleme"
+        },
+        {
+          "text": "Ekran koruyucu seçeneklerini değiştirme"
+        },
+        {
+          "text": "Tarih görüntüleme ayarını değiştirme"
+        }
+      ],
+      "correctAnswerIndex": 3
+    },
+    {
+      "id": "gift-1767078845157-18-87c",
+      "text": "I. Programlar kaldırılıp değiştirilebilir.&nbsp;<br>II. Windows özellikleri açılıp kapatılabilir.&nbsp;<br>III. Yüklü güncelleştirmeler görüntülenebilir.&nbsp;<br>Yukarıdakilerden hangisi ya da hangileri Programlar ve Özellikler penceresinden yapılabilir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Yalnız I"
+        },
+        {
+          "text": "Yalnız II"
+        },
+        {
+          "text": "I ve II"
+        },
+        {
+          "text": "II ve III"
+        },
+        {
+          "text": "I, II ve III"
+        }
+      ],
+      "correctAnswerIndex": 4
+    },
+    {
+      "id": "gift-1767078845157-19-i5b",
+      "text": "…………………………… bilgisayarın sahip olduğu tüm donanımların listelenmesini sağlamaktadır.&nbsp;<br>Cümlede boş bırakılan yere aşağıdakilerden hangisi getirilmelidir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Görev yöneticisi"
+        },
+        {
+          "text": "Aygıt yöneticisi"
+        },
+        {
+          "text": "Program yöneticisi"
+        },
+        {
+          "text": "Yazılım yöneticisi"
+        },
+        {
+          "text": "Donanım yöneticisi"
+        }
+      ],
+      "correctAnswerIndex": 1
+    },
+    {
+      "id": "gift-1767078845157-20-0sq",
+      "text": "Diğer programlardaki menü ve araç çubuklarına benzer işlevi gören, ortak görevler için grupları ve komutları barındıran etkinlik alanı aşağıdakilerden hangisidir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Sekme"
+        },
+        {
+          "text": "Şerit"
+        },
+        {
+          "text": "Komut"
+        },
+        {
+          "text": "Menü"
+        },
+        {
+          "text": "Araç"
+        }
+      ],
+      "correctAnswerIndex": 1
+    },
+    {
+      "id": "gift-1767078845157-21-ofe",
+      "text": "Nesne ve metinlerin yerleşim ayarları gibi yazım alanının organizasyonunun yapıldığı sekme aşağıdakilerden hangisidir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Giriş sekmesi"
+        },
+        {
+          "text": "Ekle Sekmesi"
+        },
+        {
+          "text": "Başvuru sekmesi"
+        },
+        {
+          "text": "Sayfa düzeni sekmesi"
+        },
+        {
+          "text": "Postalar sekmesi"
+        }
+      ],
+      "correctAnswerIndex": 3
+    },
+    {
+      "id": "gift-1767078845157-22-3jp",
+      "text": "Aşağıdaki işlemlerden hangisi giriş sekmesinden yapılamaz?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Kes – Kopyala – Yapıştır"
+        },
+        {
+          "text": "Madde İşaretleri – Numaralandırma"
+        },
+        {
+          "text": "İki Yana Yasla"
+        },
+        {
+          "text": "Kenar Boşlukları"
+        },
+        {
+          "text": "Girintiyi Artır"
+        }
+      ],
+      "correctAnswerIndex": 3
+    },
+    {
+      "id": "gift-1767078845157-23-8n7",
+      "text": "Seçilen metindeki yazı tipi boyutu, biçimi ve yazı tipi gibi özelliklerinin başka bir metinde yapıştırılması aşağıdaki hangi araç ile yapılır?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Belge özellikleri"
+        },
+        {
+          "text": "Biçim boyacısı"
+        },
+        {
+          "text": "Biçimlendirmesi"
+        },
+        {
+          "text": "Numaralandırma"
+        },
+        {
+          "text": "Stiller"
+        }
+      ],
+      "correctAnswerIndex": 1
+    },
+    {
+      "id": "gift-1767078845157-24-vax",
+      "text": "“Çözünürlük, değerini yatay (satır) ve düşey (sütun) olarak sıralanan …….. sayısının yazımıyla ifade edilir.”<br>Cümlede boş bırakılan yere aşağıdakilerden hangisi getirilmelidir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "dpi"
+        },
+        {
+          "text": "pixel"
+        },
+        {
+          "text": "VGA"
+        },
+        {
+          "text": "inç"
+        },
+        {
+          "text": "DVI"
+        }
+      ],
+      "correctAnswerIndex": 1
+    },
+    {
+      "id": "gift-1767078845157-25-nqw",
+      "text": "İnsanlığın teknolojik evrimi göz önüne alındığında kullandıkları ilk alet aşağıdakilerden hangisini sağlamaya yöneliktir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Diğer insanlardan korunmak"
+        },
+        {
+          "text": "Barınak inşa etmek"
+        },
+        {
+          "text": "Yiyecek aramak ve yırtıcı hayvanlardan korunmak"
+        },
+        {
+          "text": "Tarımsal üretime geçmek"
+        },
+        {
+          "text": "Hayvancılık yapmak"
+        }
+      ],
+      "correctAnswerIndex": 2
+    },
+    {
+      "id": "gift-1767078845157-26-skm",
+      "text": "Aşağıdakilerden hangisi tarihsel süreç içerisinde varolan toplum türlerinden biri değildir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Avcı-toplayıcı toplum"
+        },
+        {
+          "text": "Ekonomik toplum"
+        },
+        {
+          "text": "Tarım toplumu"
+        },
+        {
+          "text": "Sanayi toplumu"
+        },
+        {
+          "text": "Bilgi toplumu"
+        }
+      ],
+      "correctAnswerIndex": 1
+    },
+    {
+      "id": "gift-1767078845157-27-737",
+      "text": "Çömlekçilik temel olarak aşağıdaki gereksinimlerden hangisini karşılamaya yönelik ortaya çıkmıştır?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Yapıların süslenmesi"
+        },
+        {
+          "text": "Tahılların samandan ayrılması"
+        },
+        {
+          "text": "Tahılların sınıflanması"
+        },
+        {
+          "text": "Tahılların harmanlanması"
+        },
+        {
+          "text": "Ürünlerin saklanması ve taşınması"
+        }
+      ],
+      "correctAnswerIndex": 4
+    },
+    {
+      "id": "gift-1767078845157-28-m07",
+      "text": "Aşağıdakilerden hangisi sanayi devriminin sonuçlarından biri değildir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "İşbölümünün yaygınlaşması"
+        },
+        {
+          "text": "Üretimde standartlaşma olması"
+        },
+        {
+          "text": "Sınıf kavgalarının azalması"
+        },
+        {
+          "text": "Ailelerin üretim merkezi olmaktan çıkması"
+        },
+        {
+          "text": "Kentlere göçün artması"
+        }
+      ],
+      "correctAnswerIndex": 2
+    },
+    {
+      "id": "gift-1767078845157-29-r22",
+      "text": "Bilgi toplumuna geçişte en önemli etken aşağıdakilerden hangisidir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Üretimde ve tüketimde kitlesellik"
+        },
+        {
+          "text": "Eğitimde standartlaşma"
+        },
+        {
+          "text": "Kentlere göçün artması"
+        },
+        {
+          "text": "Elektronik teknolojisindeki büyük atılımlar"
+        },
+        {
+          "text": "Sağlık hizmetlerinin yaygınlaşması"
+        }
+      ],
+      "correctAnswerIndex": 3
+    },
+    {
+      "id": "gift-1767078845157-30-kb2",
+      "text": "Aşağıdakilerden hangisi teknolojik gelişmelerin olumsuz etkilerinden biri değildir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Sosyal ilişkilerin artması"
+        },
+        {
+          "text": "Çevre kirliliğinin artması"
+        },
+        {
+          "text": "İnsan sağlığının olumsuz etkilenmesi"
+        },
+        {
+          "text": "Makineleşmeyle birlikte işsizliğin artması"
+        },
+        {
+          "text": "Tarımın modernleşmesiyle toprağın fakirleşmesi"
+        }
+      ],
+      "correctAnswerIndex": 0
+    },
+    {
+      "id": "gift-1767078845157-31-e0b",
+      "text": "Teknolojinin toplum veya birey üzerinde etkisi olmadığı ve teknolojinin etkisinin kullanıcılar tarafından belirlendiği görüşünü içeren yaklaşım aşağıdakilerden hangisidir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Ağ toplumu"
+        },
+        {
+          "text": "Sosyal belirlenimcilik"
+        },
+        {
+          "text": "Teknolojik belirlenimcilik"
+        },
+        {
+          "text": "Kullanıma odaklanan belirlenimcilik"
+        },
+        {
+          "text": "Ütopyan bakış açısı"
+        }
+      ],
+      "correctAnswerIndex": 3
+    },
+    {
+      "id": "gift-1767078845157-32-vfg",
+      "text": "Aşağıdakilerden hangisi teknolojik gelişmelerin toplumu olumsuz etkilediğini savunan düşünürlerin bakış açısını ifade eder?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Ütopyan"
+        },
+        {
+          "text": "Distopyan"
+        },
+        {
+          "text": "Postmodern"
+        },
+        {
+          "text": "Dijital yerli"
+        },
+        {
+          "text": "Dijital göçebe"
+        }
+      ],
+      "correctAnswerIndex": 1
+    },
+    {
+      "id": "gift-1767078845157-33-0ff",
+      "text": "Yeterli sayıda insanın, insani duygularla siber alanda kişiler arası ağ kurmak üzere kamusal tartışmalara yeterince uzun bir süre katılmasıyla ağ içerisinde oluşturdukları toplumsal kümelenmelere ne ad verilir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Sanal topluluk"
+        },
+        {
+          "text": "Bilgi toplumu"
+        },
+        {
+          "text": "İşbirliği halindeki topluluklar"
+        },
+        {
+          "text": "Ağ toplumu"
+        },
+        {
+          "text": "Dijital topluluk"
+        }
+      ],
+      "correctAnswerIndex": 0
+    },
+    {
+      "id": "gift-1767078845157-34-xfr",
+      "text": "Aşağıdakilerden hangisi çevrimiçi ortamlarda bireylerin kendini sunma yöntemlerinden biridir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Ağlarda gezinme"
+        },
+        {
+          "text": "Video çekimi"
+        },
+        {
+          "text": "Sanal iletişim"
+        },
+        {
+          "text": "Topluluk oluşturma"
+        },
+        {
+          "text": "Özçekim"
+        }
+      ],
+      "correctAnswerIndex": 4
+    },
+    {
+      "id": "gift-1767078845157-35-wbg",
+      "text": "Ağ toplumu yaklaşımına göre, toplumları dönüştüren temel belirleyiciler aşağıdakilerden hangileridir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Bilgisayar teknolojileri ve enformasyon akışı"
+        },
+        {
+          "text": "Ekonomi ve üretim"
+        },
+        {
+          "text": "Askeri teknolojiler"
+        },
+        {
+          "text": "Endüstriyel gelişme ve sanayi"
+        },
+        {
+          "text": "Sosyokültürel değerler"
+        }
+      ],
+      "correctAnswerIndex": 0
+    },
+    {
+      "id": "gift-1767078845157-36-510",
+      "text": "İnternetin sosyal etkileşim olanaklarının kullanıldığı Web 2.0 araçlarının genel adı aşağıdakilerden hangisidir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Sosyal paylaşım"
+        },
+        {
+          "text": "Sosyal medya"
+        },
+        {
+          "text": "Sosyal ağlar"
+        },
+        {
+          "text": "Bloglar"
+        },
+        {
+          "text": "Forumlar"
+        }
+      ],
+      "correctAnswerIndex": 1
+    },
+    {
+      "id": "gift-1767078845157-37-w8b",
+      "text": "Aşağıdakilerden hangisi, sosyal ağ sitelerinin genel özelliklerinden biri değildir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Kullanıcıların profil yaratmaları"
+        },
+        {
+          "text": "Diğer kullanıcılar ile bağlantı kurulması"
+        },
+        {
+          "text": "Etiketler ile yorum yapılması"
+        },
+        {
+          "text": "Üyelik için diğer kullanıcılardan davet gerekmesi"
+        },
+        {
+          "text": "Sanal topluluk ve grupların oluşması"
+        }
+      ],
+      "correctAnswerIndex": 3
+    },
+    {
+      "id": "gift-1767078845157-38-kyu",
+      "text": "Aşağıdakilerden hangisi, sosyal ağ sitelerinin elektronik ticarete yönelik kullanımına örnektir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Ders etkinlikleri için grup oluşturma"
+        },
+        {
+          "text": "Ortak ilgi alanına sahip kişilerle haberleşme"
+        },
+        {
+          "text": "Sosyal organizasyonları takip etme"
+        },
+        {
+          "text": "İş ilanına başvurma"
+        },
+        {
+          "text": "Tanıdıklara ürün tavsiye etme"
+        }
+      ],
+      "correctAnswerIndex": 4
+    },
+    {
+      "id": "gift-1767078845157-39-ctc",
+      "text": "Sosyal ağların kullanım alanlarının çeşitlenmesinin temel nedeni aşağıdakilerden hangisidir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Elektronik ticaretin yaygınlaşması"
+        },
+        {
+          "text": "Ağlardaki kullanıcı sayısının artma eğilimi"
+        },
+        {
+          "text": "Bilgi iletişim teknolojilerinin gelişmesi"
+        },
+        {
+          "text": "Sanal toplulukların oluşması"
+        },
+        {
+          "text": "İnternet trafiğinin izlenmesi"
+        }
+      ],
+      "correctAnswerIndex": 2
+    },
+    {
+      "id": "gift-1767078845157-40-rgj",
+      "text": "Aşağıdakilerden hangisi sosyal ağ sitelerini kullanmak için mutlaka gereklidir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "İnternet erişimine sahip olmak"
+        },
+        {
+          "text": "Ücret ödemek"
+        },
+        {
+          "text": "Siteden davet gelmesi"
+        },
+        {
+          "text": "İletişim bilgisi olarak telefon numarası vermek"
+        },
+        {
+          "text": "Medya okuryazarlığı becerilerine sahip olmak"
+        }
+      ],
+      "correctAnswerIndex": 0
+    },
+    {
+      "id": "gift-1767078845157-41-2bh",
+      "text": "Facebook'ta faaliyet alanı ile ilgili tanıtım yapmak isteyen bir şirket için en uygun eylem aşağıdakilerden hangisidir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Bireysel hesap açmak"
+        },
+        {
+          "text": "Herkese açık grup açarak etkinlik düzenlemek"
+        },
+        {
+          "text": "Kapalı grup açmak"
+        },
+        {
+          "text": "Sadece kendi personelinin yer aldığı bir gizli grup açmak"
+        },
+        {
+          "text": "Şirkete ait bir sayfa oluşturmak"
+        }
+      ],
+      "correctAnswerIndex": 4
+    },
+    {
+      "id": "gift-1767078845157-42-elj",
+      "text": "LinkedIn'deki onaylama sistemi nedir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Kullanıcının iş başvurusunun olumlu sonuçlanması"
+        },
+        {
+          "text": "Kullanıcının yetenek, beceri ve deneyimlerinin bağlantıda olduğu kişilerce geçerlenmesi"
+        },
+        {
+          "text": "Kullanıcı hakkında olumlu tavsiye mektubu yazılması"
+        },
+        {
+          "text": "Kullanıcının yaptığı paylaşımların beğenilmesi"
+        },
+        {
+          "text": "Kullanıcının paylaşımlarının başkaları tarafından da paylaşılması"
+        }
+      ],
+      "correctAnswerIndex": 1
+    },
+    {
+      "id": "gift-1767078845157-43-zos",
+      "text": "YouTube'da aşağıdakilerden hangisini yapmak için siteye üye olmak gerekmez?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Video oluşturmak"
+        },
+        {
+          "text": "Video yüklemek"
+        },
+        {
+          "text": "Video izlemek"
+        },
+        {
+          "text": "Yayınlanan videolara yorum yapmak"
+        },
+        {
+          "text": "Kendine ait kanal oluşturmak"
+        }
+      ],
+      "correctAnswerIndex": 2
+    },
+    {
+      "id": "gift-1767078845157-44-4j2",
+      "text": "Medya okuryazarlığına ilişkin iki temel unsur hangileridir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "İçerik üretme yeterliliği - Veri madenciliği"
+        },
+        {
+          "text": "Bağlantı kurma yeteneği - Paylaşım sayısının miktarı"
+        },
+        {
+          "text": "İnterneti kullanma deneyimi - Mesajı uygun ortamda sunabilme yeterliliği"
+        },
+        {
+          "text": "Teknolojiyi kullanma becerisi - İnterneti kullanma deneyimi"
+        },
+        {
+          "text": "Teknolojiyi kullanma becerisi - İçeriği değerlendirebilme yeteneği"
+        }
+      ],
+      "correctAnswerIndex": 4
+    },
+    {
+      "id": "gift-1767078845157-45-li6",
+      "text": "Aşağıdakilerden hangisi taşınabilir teknolojiler için hem avantaj hem de dezavantaj olarak görülebilir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Her yerde kullanabilme esnekliği"
+        },
+        {
+          "text": "Çokluortam kullanımı"
+        },
+        {
+          "text": "Kişiselleştirme özelliği"
+        },
+        {
+          "text": "Şarj edilebilir bataryalar"
+        },
+        {
+          "text": "Uzun süre kullanmaya bağlı sorunlar"
+        }
+      ],
+      "correctAnswerIndex": 3
+    },
+    {
+      "id": "gift-1767078845157-46-uen",
+      "text": "Aşağıdakilerden hangisi giyilebilir teknoloji olarak değerlendirilebilir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Tablet bilgisayarlar"
+        },
+        {
+          "text": "Akıllı gözlükler"
+        },
+        {
+          "text": "Akıllı telefonlar"
+        },
+        {
+          "text": "Dizüstü bilgisayarlar"
+        },
+        {
+          "text": "Şarj edilebilir bataryalar"
+        }
+      ],
+      "correctAnswerIndex": 1
+    },
+    {
+      "id": "gift-1767078845157-47-e8x",
+      "text": "Aşağıdakilerden hangisi taşınabilir teknolojilerden biri değildir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Masaüstü bilgisayar"
+        },
+        {
+          "text": "Akıllı telefon"
+        },
+        {
+          "text": "Dizüstü bilgisayar"
+        },
+        {
+          "text": "Tablet bilgisayar"
+        },
+        {
+          "text": "Akıllı saat"
+        }
+      ],
+      "correctAnswerIndex": 0
+    },
+    {
+      "id": "gift-1767078845157-48-q6t",
+      "text": "Bir çok kullanıcı tarafından dizüstü bilgisayar yerine kullanılan isim aşağıdakilerden hangisidir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Netbook"
+        },
+        {
+          "text": "Tablet"
+        },
+        {
+          "text": "Notebook"
+        },
+        {
+          "text": "Slate"
+        },
+        {
+          "text": "Masaüstü"
+        }
+      ],
+      "correctAnswerIndex": 2
+    },
+    {
+      "id": "gift-1767078845157-49-d74",
+      "text": "Aşağıdakilerden hangisi \"nomofobi\"yi en iyi tanımlar?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Telefonum yanımda değil ve ben huzursuzum"
+        },
+        {
+          "text": "Telefonda diğer insanlarla rahat konuşamıyorum"
+        },
+        {
+          "text": "Tablet bilgisayarımı kullanırken rahat değilim"
+        },
+        {
+          "text": "Dizüstü bilgisayarımın belleği çok yetersiz"
+        },
+        {
+          "text": "Akıllı saatimi tüm özellikleri ile gibi kullanamıyorum"
+        }
+      ],
+      "correctAnswerIndex": 4
+    },
+    {
+      "id": "gift-1767078845157-50-w0o",
+      "text": "Taşınabilir teknolojinin gelişimini en iyi ifade eden sıralama aşağıdakilerden hangisidir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Masaüstü PC-Dizüstü PC-Akıllı Telefon-Şarj edilebilir batarya-Kamera"
+        },
+        {
+          "text": "Akıllı saat-Tablet-Mobil Telefon-Dizüstü PC-Masaüstü PC"
+        },
+        {
+          "text": "3D yazıcı-E-Posta-Sosyal ağlar-SMS ve MMS-Video görüşme"
+        },
+        {
+          "text": "Nesnelerin interneti-Artırılmış gerçeklik-Navigasyon-Ses tanıma-ADSL"
+        },
+        {
+          "text": "Masaüstü PC-Mobil Telefon-Dizüstü PC-Tablet-Akıllı saat"
+        }
+      ],
+      "correctAnswerIndex": 0
+    },
+    {
+      "id": "gift-1767078845157-51-ril",
+      "text": "Araştırmalara göre ülkemizde akıllı telefonların en yoğun kullanıldığı alan aşağıdakilerden hangisidir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Haber okumak"
+        },
+        {
+          "text": "Arama yapmak"
+        },
+        {
+          "text": "Oyun oynamak"
+        },
+        {
+          "text": "Sosyal ağlara girmek"
+        },
+        {
+          "text": "Yol tarifi için kullanmak"
+        }
+      ],
+      "correctAnswerIndex": 3
+    },
+    {
+      "id": "gift-1767078845157-52-4hs",
+      "text": "Taşınabilir teknolojilerin aynı anda ses, grafik ve video paylaşabilmesini sağlayan teknoloji aşağıdakilerden hangisidir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "GPRS"
+        },
+        {
+          "text": "EDGE"
+        },
+        {
+          "text": "3G"
+        },
+        {
+          "text": "GSM"
+        },
+        {
+          "text": "GPS"
+        }
+      ],
+      "correctAnswerIndex": 2
+    },
+    {
+      "id": "gift-1767078845157-53-s9x",
+      "text": "Aşağıdakilerden hangisi taşınabilir teknolojilerin günümüzde en son geldiği noktayı temsil eder?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Her ortamda kullanılabilme"
+        },
+        {
+          "text": "Sosyal medya paylaşımları"
+        },
+        {
+          "text": "Kablosuz internet erişimi"
+        },
+        {
+          "text": "Şarj edilebilir batarya"
+        },
+        {
+          "text": "Giyilebilir teknolojiler"
+        }
+      ],
+      "correctAnswerIndex": 4
+    },
+    {
+      "id": "gift-1767078845157-54-wlf",
+      "text": "Aşağıdakilerden hangisi tam ekran tablet bilgisayarlarda görmeye alışık olmadığımız özelliklerden biridir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "İnternet erişimi"
+        },
+        {
+          "text": "Fiziksel klavye"
+        },
+        {
+          "text": "Çokluortam uygulamaları"
+        },
+        {
+          "text": "Kompakt yapı"
+        },
+        {
+          "text": "Ekran etkileşimi"
+        }
+      ],
+      "correctAnswerIndex": 1
+    },
+    {
+      "id": "gift-1767078845157-55-1xc",
+      "text": "İnternet üzerinde web sayfası oluşturmak için kullanılan betik dil aşağıdakilerden hangisidir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "ftp"
+        },
+        {
+          "text": "http"
+        },
+        {
+          "text": "www"
+        },
+        {
+          "text": "URL"
+        },
+        {
+          "text": "html"
+        }
+      ],
+      "correctAnswerIndex": 4
+    },
+    {
+      "id": "gift-1767078845157-56-40i",
+      "text": "Aşağıdakilerden hangisi Internet veri transferi protokollerinden biri değildir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "ftp"
+        },
+        {
+          "text": "http"
+        },
+        {
+          "text": "mailto"
+        },
+        {
+          "text": "Web"
+        },
+        {
+          "text": "https"
+        }
+      ],
+      "correctAnswerIndex": 3
+    },
+    {
+      "id": "gift-1767078845157-57-26v",
+      "text": "İçerisinde Açıköğretim Fakültesi ifadesinin aynen geçtiği Web sayfalarını bulmak için arama motorunda kullanılması gereken sorgulama ifadesi aşağıdakilerden hangisidir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Açıköğretim Fakültesi"
+        },
+        {
+          "text": "Açıköğretim+Fakültesi"
+        },
+        {
+          "text": "\"Açıköğretim Fakültesi\""
+        },
+        {
+          "text": "Açıköğretim AND Fakültesi"
+        },
+        {
+          "text": "Açıköğretim - Fakültesi"
+        }
+      ],
+      "correctAnswerIndex": 2
+    },
+    {
+      "id": "gift-1767078845157-58-cls",
+      "text": "Aşağıdaki web tarayıcılarından hangisi açık kaynak kodludur?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Mozilla Firefox"
+        },
+        {
+          "text": "Google Chrome"
+        },
+        {
+          "text": "Windows Internet Explorer"
+        },
+        {
+          "text": "Safari"
+        },
+        {
+          "text": "Yandex"
+        }
+      ],
+      "correctAnswerIndex": 0
+    },
+    {
+      "id": "gift-1767078845157-59-7p4",
+      "text": "TR-NET'in 1992 yılında gerçekleştirdiği ilk deneysel çalışmalar hangi ülkeye yapılmıştır?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Fransa"
+        },
+        {
+          "text": "Hollanda"
+        },
+        {
+          "text": "İngiltere"
+        },
+        {
+          "text": "Almanya"
+        },
+        {
+          "text": "Yunanistan"
+        }
+      ],
+      "correctAnswerIndex": 1
+    },
+    {
+      "id": "gift-1767078845157-60-jzp",
+      "text": "Türkiye'de ilk İnternet bağlantısı ne zaman gerçekleştirilmiştir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "1986"
+        },
+        {
+          "text": "1987"
+        },
+        {
+          "text": "1990"
+        },
+        {
+          "text": "1991"
+        },
+        {
+          "text": "1993"
+        }
+      ],
+      "correctAnswerIndex": 4
+    },
+    {
+      "id": "gift-1767078845157-61-3cp",
+      "text": "Küresel ve yerel özellikleri birleştirerek coğrafi konum bazlı ve kişiselleştirilebilen uygulamalar konusunda öne çıkan arama motoru aşağıdakilerden hangisidir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Google"
+        },
+        {
+          "text": "Bing"
+        },
+        {
+          "text": "Yahoo"
+        },
+        {
+          "text": "Yandex"
+        },
+        {
+          "text": "Google Akademik"
+        }
+      ],
+      "correctAnswerIndex": 3
+    },
+    {
+      "id": "gift-1767078845157-62-v6w",
+      "text": "Aşağıdakilerden hangisi Google Akademik arama motoru özelliklerinden biri değildir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Farklı kaynaklara arama"
+        },
+        {
+          "text": "Bilimsel yazıları, özetleri ve alıntıları bulma"
+        },
+        {
+          "text": "En çok beğenilen görselleri arama"
+        },
+        {
+          "text": "Herhangi bir konuda hakkında bilimsel yazılardan bilgi edinme"
+        },
+        {
+          "text": "Kütüphane yardımı yoluyla yazıların tamamına erişme"
+        }
+      ],
+      "correctAnswerIndex": 2
+    },
+    {
+      "id": "gift-1767078845157-63-5x1",
+      "text": "Aşağıdakilerden hangisi dünyada e-Devlet uygulamalarının kullanım amaçları arasında yer almaz?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Statüye göre kaynak kullanımını denetleme"
+        },
+        {
+          "text": "Demokrasi bilincinin kazandırılması"
+        },
+        {
+          "text": "Hükümete güven ve bağlılığın artırılması"
+        },
+        {
+          "text": "Şeffaflığın sağlanması"
+        },
+        {
+          "text": "Maliyetlerin düşürülmesi"
+        }
+      ],
+      "correctAnswerIndex": 0
+    },
+    {
+      "id": "gift-1767078845157-64-ot7",
+      "text": "Aşağıdaki yazılımlardan hangisi bir hesap tablosu yazılımı değildir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "OpenOffice Calc"
+        },
+        {
+          "text": "Access"
+        },
+        {
+          "text": "VisiCalc"
+        },
+        {
+          "text": "Excel"
+        },
+        {
+          "text": "Numbers"
+        }
+      ],
+      "correctAnswerIndex": 1
+    },
+    {
+      "id": "gift-1767078845157-65-82f",
+      "text": "Hesap Tablosu yazılımının kullanımı zorunlu olan işlem aşağıdakilerden hangisidir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Satış grafiğinin çizilmesi"
+        },
+        {
+          "text": "Mail listesinin oluşturulması"
+        },
+        {
+          "text": "Haftalık ders listesinin oluşturulması"
+        },
+        {
+          "text": "Broşür belgesinin hazırlanması"
+        },
+        {
+          "text": "Web sayfasının hazırlanması"
+        }
+      ],
+      "correctAnswerIndex": 0
+    },
+    {
+      "id": "gift-1767078845157-66-7or",
+      "text": "Aşağıdakilerden hangisi aktif hücrenin ilgili adrese taşınmasını sağlar?",
+      "image": null,
+      "answers": [
+        {
+          "text": "F5"
+        },
+        {
+          "text": "F1"
+        },
+        {
+          "text": "Ctrl+Home"
+        },
+        {
+          "text": "F2"
+        },
+        {
+          "text": "Shift F2"
+        }
+      ],
+      "correctAnswerIndex": 0
+    },
+    {
+      "id": "gift-1767078845157-67-qnt",
+      "text": "\"1,0E+3\" biçimini oluşturan sayı biçimi aşağıdakilerden hangisidir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Saat"
+        },
+        {
+          "text": "Metin"
+        },
+        {
+          "text": "Tarih"
+        },
+        {
+          "text": "Bilimsel"
+        },
+        {
+          "text": "Finansal"
+        }
+      ],
+      "correctAnswerIndex": 3
+    },
+    {
+      "id": "gift-1767078845157-68-qnp",
+      "text": "Hesap tablosu adresleme sisteminde \":\" işareti ne anlama gelir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Üs işareti"
+        },
+        {
+          "text": "Parametre ayracı"
+        },
+        {
+          "text": "Adres aralığı"
+        },
+        {
+          "text": "Eşit değildir"
+        },
+        {
+          "text": "Kesişim kümesi"
+        }
+      ],
+      "correctAnswerIndex": 2
+    },
+    {
+      "id": "gift-1767078845157-69-5ks",
+      "text": "Bir hücrede \"#SAYI/0!\" ifadesinin oluşmasına neden olan ifade aşağıdakilerden hangisidir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Sıfıra bölme hatası"
+        },
+        {
+          "text": "Aranan değerin bulunamaması"
+        },
+        {
+          "text": "Hatalı parametre kullanımı"
+        },
+        {
+          "text": "Hatalı referans kullanımı"
+        },
+        {
+          "text": "Hatalı ad kullanımı"
+        }
+      ],
+      "correctAnswerIndex": 0
+    },
+    {
+      "id": "gift-1767078845157-70-dxf",
+      "text": "Hesap tablolarında \"= ÇARPINIM (KAREKÖK(25))\" ifadesinin sonucu aşağıdakilerden hangisidir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "100"
+        },
+        {
+          "text": "5"
+        },
+        {
+          "text": "25"
+        },
+        {
+          "text": "64"
+        },
+        {
+          "text": "120"
+        }
+      ],
+      "correctAnswerIndex": 4
+    },
+    {
+      "id": "gift-1767078845157-71-ow0",
+      "text": "Sıralama ile ilgili aşağıdaki ifadelerden hangisi yanlıştır?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Sıralama ile seçilecek anahtar sayısı 3 ile sınırlıdır."
+        },
+        {
+          "text": "Anahtar alanına göre büyükten küçüğe sıralanabilir."
+        },
+        {
+          "text": "Anahtar alanın hücre rengine göre sıralanabilir."
+        },
+        {
+          "text": "Anahtar alanın yazı rengine göre sıralanabilir."
+        },
+        {
+          "text": "Sıralanacak liste işlem öncesinde seçilmelidir."
+        }
+      ],
+      "correctAnswerIndex": 0
+    },
+    {
+      "id": "gift-1767078845157-72-69g",
+      "text": "Filtreleme işleminin gerekçesi aşağıdakilerden hangisi olabilir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Alt veri kümelerine erişim"
+        },
+        {
+          "text": "Hücrelere yetkisiz erişimin engellenmesi"
+        },
+        {
+          "text": "Doğru sıralamanın elde edilmesi için"
+        },
+        {
+          "text": "Özetleme listesi oluşturmak için"
+        },
+        {
+          "text": "Tekrarlı satırların elimine edilmesi için"
+        }
+      ],
+      "correctAnswerIndex": 3
+    },
+    {
+      "id": "gift-1767078845157-73-60t",
+      "text": "Aşağıdakilerden hangisi özet tablo şablonunda yer alan bölmelerden biri değildir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Satırlar"
+        },
+        {
+          "text": "Değerler"
+        },
+        {
+          "text": "Toplam"
+        },
+        {
+          "text": "Sütunlar"
+        },
+        {
+          "text": "Filtreler"
+        }
+      ],
+      "correctAnswerIndex": 2
+    },
+    {
+      "id": "gift-1767078845157-74-xf9",
+      "text": "Aşağıdakilerden hangisi, etkili bir sunumun hazırlık aşamasında sunumu hazırlayan kişi tarafından yapılması gereken işlerden biri değildir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Sunum yapma amacını belirlemek"
+        },
+        {
+          "text": "Sunumun süresini belirlemek için katılımcılara anket uygulamak"
+        },
+        {
+          "text": "Katılımcıların yaş, cinsiyet, eğitim durumu ve deneyimleriyle ilgili bilgi toplamak"
+        },
+        {
+          "text": "Katılımcıların gereksinim ve sunudan beklentileri göz önünde bulunmak"
+        },
+        {
+          "text": "Katılımcılardan gelebilecek sorulara karşı hazırlık yapmak"
+        }
+      ],
+      "correctAnswerIndex": 1
+    },
+    {
+      "id": "gift-1767078845157-75-6qc",
+      "text": "Aşağıdakilerden hangisi katılımcıların sunumu kolay izleyebilmeleri için dikkat edilmesi gerekenlerden biri değildir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "En fazla 10-15 kelimeden oluşan kısa cümleler kullanmak"
+        },
+        {
+          "text": "Etken fiiller kullanmak"
+        },
+        {
+          "text": "Oturma düzenini boy sırasına göre ayarlamak"
+        },
+        {
+          "text": "Genel ifadeler yerine somut örnekler vererek net ifadeler kullanmak"
+        },
+        {
+          "text": "Sözcükleri isabetli seçmek ve çok bilinenden az bilinene doğru ilerlemek"
+        }
+      ],
+      "correctAnswerIndex": 2
+    },
+    {
+      "id": "gift-1767078845157-76-unw",
+      "text": "Sunumda verilmek istenen mesajın kalıcılığını sağlamak için kapanış bölümünde yapılması gereken aşağıdakilerden hangisidir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Sunumda anlatılanların en önemli noktalarını içeren çarpıcı, kısa bir özetle birlikte soru-cevap bölümüne yer verilmelidir."
+        },
+        {
+          "text": "Hazırlanılan sunum başa alınarak ilgili konuyu katılımcıların anlatması istenmelidir."
+        },
+        {
+          "text": "Katılımcıların sorularının molada birebir cevaplanacağı söylenerek kapanış yapılmalıdır."
+        },
+        {
+          "text": "Konuyla ilgili yazılı bir test uygulanmalıdır."
+        },
+        {
+          "text": "Konuyla ilgili sözlü bir test ve ödül-ceza yöntemi uygulanmalıdır."
+        }
+      ],
+      "correctAnswerIndex": 0
+    },
+    {
+      "id": "gift-1767078845157-77-lh2",
+      "text": "Aşağıdakilerden hangisi sunumlarda yapılan hatalardan biri değildir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Sunuda çok fazla bilgi, renk ve görsel kullanılması"
+        },
+        {
+          "text": "Farklı büyüklüklerde yazı puntosu kullanılması"
+        },
+        {
+          "text": "Sunucunun dinleyicilere sırtını dönmesi"
+        },
+        {
+          "text": "Görsel malzemenin çok fazla yazılı metinle, resimlerle veya çok farklı renklerle doldurulması"
+        },
+        {
+          "text": "Aktarıcının sunuma konuya ilişkin bir fıkra ya da başından geçen bir olayla başlaması"
+        }
+      ],
+      "correctAnswerIndex": 4
+    },
+    {
+      "id": "gift-1767078845157-78-4up",
+      "text": "Aşağıdaki sunum araçlarından hangisi 2014 yılında seçilen en iyi yedi sunum aracından biri değildir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Clearslide"
+        },
+        {
+          "text": "Prezi"
+        },
+        {
+          "text": "Slideshark"
+        },
+        {
+          "text": "Haiku Deck"
+        },
+        {
+          "text": "Microsoft Powerpoint"
+        }
+      ],
+      "correctAnswerIndex": 4
+    },
+    {
+      "id": "gift-1767078845157-79-78w",
+      "text": "Microsoft PowerPoint dosyalarının uzantısı aşağıdakilerden hangisidir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "pdf"
+        },
+        {
+          "text": "html"
+        },
+        {
+          "text": "pptx"
+        },
+        {
+          "text": "jpg"
+        },
+        {
+          "text": "doc"
+        }
+      ],
+      "correctAnswerIndex": 2
+    },
+    {
+      "id": "gift-1767078845157-80-792",
+      "text": "PowerPoint sunularını hazırlarken slaytların arka plan stil ve renklerini ayarlamak için kullanılan sekme ve komut aşağıdakilerden hangisidir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Tasarım Sekmesi > \"Arka Planı Biçimlendir\""
+        },
+        {
+          "text": "Biçim Sekmesi > \" Metin Efektleri\""
+        },
+        {
+          "text": "Gözden Geçir Sekmesi > \"Karşılaştır\""
+        },
+        {
+          "text": "Ekle Sekmesi > \"SmartArt\""
+        },
+        {
+          "text": "Slayt Gösterisi> \"Slaydı Gizle\""
+        }
+      ],
+      "correctAnswerIndex": 0
+    },
+    {
+      "id": "gift-1767078845157-81-1o9",
+      "text": "Aşağıdakilerden hangisi \"Prezi\" nin kullanıcılarına sunduğu hizmetlerden biri değildir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Sunumları çevrim içi ortamda saklamak"
+        },
+        {
+          "text": "Çevrim içi ortamda davet ettiğiniz kişiler ile birlikte aynı sunum üzerinde çalışmak"
+        },
+        {
+          "text": "Daha önce hazırlanan sunumları bilgisayarınıza indirebilmek"
+        },
+        {
+          "text": "Sunumlara flash animasyonlar, çevrim içi videolar, fotoğraflar eklemeye izin vermek"
+        },
+        {
+          "text": "Çevrim içi video-konferans düzenlenmesine izin vermek"
+        }
+      ],
+      "correctAnswerIndex": 4
+    },
+    {
+      "id": "gift-1767078845157-82-xit",
+      "text": "Bilgisayardan fotoğraf, pdf dosyası, video, Youtube videolarını ya da çevrim içi bir fotoğrafı sunuma eklemeye yarayan \"prezi\" menüsü aşağıdakilerden hangisidir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Insert"
+        },
+        {
+          "text": "Frame"
+        },
+        {
+          "text": "Path"
+        },
+        {
+          "text": "Colors&Fonts"
+        },
+        {
+          "text": "Theme"
+        }
+      ],
+      "correctAnswerIndex": 0
+    },
+    {
+      "id": "gift-1767078845157-83-fst",
+      "text": "İşaretlenen tüm ögelerin hepsinin sunuma katılmasını sağlayan ve sıralama olanağı veren \"prezi\" menüsü aşağıdakilerden hangisidir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Insert"
+        },
+        {
+          "text": "Frame"
+        },
+        {
+          "text": "Path"
+        },
+        {
+          "text": "Colors&Fonts"
+        },
+        {
+          "text": "Theme"
+        }
+      ],
+      "correctAnswerIndex": 2
+    },
+    {
+      "id": "gift-1767078845157-84-hdx",
+      "text": "Aşağıdaki kavramlardan hangisi sözcük işlemcilerin tarihçesinde yer almaz?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Cümle işlemciler"
+        },
+        {
+          "text": "Satır düzenleyiciler"
+        },
+        {
+          "text": "Metin düzenleyiciler"
+        },
+        {
+          "text": "Sözcük işlemciler"
+        },
+        {
+          "text": "Masaüstü yayıncılık sistemleri"
+        }
+      ],
+      "correctAnswerIndex": 0
+    },
+    {
+      "id": "gift-1767078845157-85-r7x",
+      "text": "Windows işletim sisteminde sadece düz metin dosyalarının düzenlemek için kullanılan önceden yüklenmiş uygulama aşağıdakilerden hangisidir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "TextPad"
+        },
+        {
+          "text": "NotePad"
+        },
+        {
+          "text": "Text"
+        },
+        {
+          "text": "OneNote"
+        },
+        {
+          "text": "WordPad"
+        }
+      ],
+      "correctAnswerIndex": 1
+    },
+    {
+      "id": "gift-1767078845157-86-hbt",
+      "text": "Sözcük işlemcilerde imlecin solundaki karakteri silmek amacıyla kullanılan klavye tuşu aşağıdakilerden hangisidir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "BackSpace"
+        },
+        {
+          "text": "Delete"
+        },
+        {
+          "text": "Shift+Delete"
+        },
+        {
+          "text": "Ctrl+X"
+        },
+        {
+          "text": "CapsLock"
+        }
+      ],
+      "correctAnswerIndex": 0
+    },
+    {
+      "id": "gift-1767078845157-87-ik2",
+      "text": "Bir sözcük işlemcide sözcüğüne uygulanmış olan biçimlendirme aşağıdakilerden hangisinde eksiksiz olarak verilmiştir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "İtalik, üst simge, kenarlık, üstü çizili"
+        },
+        {
+          "text": "Normal, üstü çizili, zemin rengi, kenarlık"
+        },
+        {
+          "text": "İtalik, altı çizili, kenarlık, kalın"
+        },
+        {
+          "text": "Kalın, italik, üstü çizili, kenarlık, zemin rengi"
+        },
+        {
+          "text": "Kalın, alt simge, üstü çizili, zemin rengi, kenarlık"
+        }
+      ],
+      "correctAnswerIndex": 3
+    },
+    {
+      "id": "gift-1767078845157-88-4s6",
+      "text": "Aşağıdakilerden hangisi bir Sözcük İşlemcide paragraf biçimlendirme işlemi değildir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Hizalama"
+        },
+        {
+          "text": "Maddeleme"
+        },
+        {
+          "text": "Filigran"
+        },
+        {
+          "text": "Girintileme"
+        },
+        {
+          "text": "Satır aralığı"
+        }
+      ],
+      "correctAnswerIndex": 2
+    },
+    {
+      "id": "gift-1767078845157-89-2xh",
+      "text": "Belgeye eklenebilen ve Open Office Writer uygulamasında bulunmayan Microsoft Word uygulaması ögesi aşağıdakilerden hangisidir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Akıllı şekil"
+        },
+        {
+          "text": "Video"
+        },
+        {
+          "text": "Tablo"
+        },
+        {
+          "text": "Çizelge"
+        },
+        {
+          "text": "Formül"
+        }
+      ],
+      "correctAnswerIndex": 0
+    },
+    {
+      "id": "gift-1767078845157-90-p7h",
+      "text": "Aşağıdaki ögelerden hangisi Sözcük İşlemci içerisinde düzenlenemez?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Video"
+        },
+        {
+          "text": "Çizim (Şekil)"
+        },
+        {
+          "text": "Tablo"
+        },
+        {
+          "text": "Çizelge (Grafik)"
+        },
+        {
+          "text": "Yazı sanatı (Sanatsal yazı)"
+        }
+      ],
+      "correctAnswerIndex": 0
+    },
+    {
+      "id": "gift-1767078845157-91-3fo",
+      "text": "Belgede tutarlı bir genel görünüm oluşturmak için benzersiz bir renk, yazı tipi ve efekt kümesini içeren yapı aşağıdakilerden hangisidir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Biçim"
+        },
+        {
+          "text": "Stil"
+        },
+        {
+          "text": "Filigran"
+        },
+        {
+          "text": "Şablon"
+        },
+        {
+          "text": "Tema"
+        }
+      ],
+      "correctAnswerIndex": 4
+    },
+    {
+      "id": "gift-1767078845157-92-uqi",
+      "text": "Aşağıdakilerden hangisi Word uygulamasında belgeyi korumak amacıyla gerçekleştirilebilen işlemlerden biri değildir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Yazıtipi rengi sayfa rengiyle aynı yapılarak görünmesi engellenir"
+        },
+        {
+          "text": "Belge salt okunur hâle getirilir"
+        },
+        {
+          "text": "Parola ile şifrelenir"
+        },
+        {
+          "text": "Düzenleme ve erişim olanakları kısıtlanır"
+        },
+        {
+          "text": "Belgeye dijital imza eklenerek bütünlüğü sağlanır"
+        }
+      ],
+      "correctAnswerIndex": 0
+    },
+    {
+      "id": "gift-1767078845157-93-ofr",
+      "text": "Bir belge üzerinde aynı anda birden fazla kişinin çalışması için gerekli koşul nedir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Kişilerin kendi bilgisayarlarında aynı isimli belge açmaları"
+        },
+        {
+          "text": "Kişilerin aynı bilgisayarı ve klavyeyi kullanıyor olması"
+        },
+        {
+          "text": "Kişilerin Office Mobile kullanıyor olması"
+        },
+        {
+          "text": "Belgenin Word Online ya da Google Docs ile düzenleniyor olması"
+        },
+        {
+          "text": "Belgenin salt okunur olması"
+        }
+      ],
+      "correctAnswerIndex": 3
+    },
+    {
+      "id": "gift-1767078845157-94-zup",
+      "text": "Dünyanın en değerli markaları listesinde ilk iki sırayı bilgi teknoloji firmalarının paylaşması aşağıdakilerden hangisinin kanıtıdır?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Günümüzde bilginin önemi"
+        },
+        {
+          "text": "Verinin hızlı yayılması"
+        },
+        {
+          "text": "Bilgi işleme hızının artışı"
+        },
+        {
+          "text": "Sanayi üretiminin artışı"
+        },
+        {
+          "text": "Gelir dengesinin değişmesi"
+        }
+      ],
+      "correctAnswerIndex": 0
+    },
+    {
+      "id": "gift-1767078845157-95-w3f",
+      "text": "Çevrim içi ortamlarda gerçekleştirilen eylemlerle ilgili aşağıdaki ifadelerden hangisi doğrudur?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Her eylem bir bilgi üretir."
+        },
+        {
+          "text": "Eylemin bilgi üretmesi için en az megabayt boyutunda olması gerekir."
+        },
+        {
+          "text": "Çevrim içi ortamlarda eylemler ancak kişiler tarafından gerçekleştirilebilir."
+        },
+        {
+          "text": "Web sitesi ziyaret etmek çevrim içi bir eylem değildir."
+        },
+        {
+          "text": "Facebook'ta bir gönderiyi beğenmek bilgi üretmez."
+        }
+      ],
+      "correctAnswerIndex": 0
+    },
+    {
+      "id": "gift-1767078845157-96-m75",
+      "text": "Bilgi işlem piramidinin temel ögesi aşağıdakilerden hangisidir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Fikir"
+        },
+        {
+          "text": "Bilgi"
+        },
+        {
+          "text": "Malumat"
+        },
+        {
+          "text": "İrfan"
+        },
+        {
+          "text": "Veri"
+        }
+      ],
+      "correctAnswerIndex": 4
+    },
+    {
+      "id": "gift-1767078845157-97-abp",
+      "text": "Markette barkod ile bir ürünün okunması hangi bilgi işleme sürecinde gerçekleşir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Aktarma"
+        },
+        {
+          "text": "İşleme"
+        },
+        {
+          "text": "Toplama"
+        },
+        {
+          "text": "Düzenleme"
+        },
+        {
+          "text": "Analiz"
+        }
+      ],
+      "correctAnswerIndex": 2
+    },
+    {
+      "id": "gift-1767078845157-98-dym",
+      "text": "Aşağıdakilerden hangisi bilgilerin bir bellekten diğerine aktarılmasını sağlayan zihinsel etkinliklerden biri değildir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Dikkat"
+        },
+        {
+          "text": "Gösterim"
+        },
+        {
+          "text": "Kodlama"
+        },
+        {
+          "text": "Depolama"
+        },
+        {
+          "text": "Tekrar"
+        }
+      ],
+      "correctAnswerIndex": 1
+    },
+    {
+      "id": "gift-1767078845157-99-tyf",
+      "text": "Anlık bellek ile ilgili aşağıdaki ifadelerden hangisi yanlıştır?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Duyusal bilginin çok kısa sürelerde işlendiği bellektir."
+        },
+        {
+          "text": "Algısal bellek olarak da adlandırılabilir."
+        },
+        {
+          "text": "Anlık bellekten süzülen sınırlı sayıdaki bilgi kısa süreli belleğe aktarılır."
+        },
+        {
+          "text": "Algısal belleğin kapasitesi sınırlıdır."
+        },
+        {
+          "text": "Anlık bilginin tutulma süresi sınırlıdır."
+        }
+      ],
+      "correctAnswerIndex": 3
+    },
+    {
+      "id": "gift-1767078845157-100-18t",
+      "text": "Orijinal verinin değiştirilmeden kullanılabilir veri haline getirildiği aşama aşağıdakilerden hangisidir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Toplama"
+        },
+        {
+          "text": "Düzenleme"
+        },
+        {
+          "text": "Analiz"
+        },
+        {
+          "text": "İşleme"
+        },
+        {
+          "text": "Gösterim"
+        }
+      ],
+      "correctAnswerIndex": 2
+    },
+    {
+      "id": "gift-1767078845157-101-ent",
+      "text": "Aşağıdakilerden hangisi girdi birimlerinden biridir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Klavye"
+        },
+        {
+          "text": "Ekran"
+        },
+        {
+          "text": "Yazıcı"
+        },
+        {
+          "text": "Hoparlör"
+        },
+        {
+          "text": "Projeksiyon cihazı"
+        }
+      ],
+      "correctAnswerIndex": 0
+    },
+    {
+      "id": "gift-1767078845157-102-j04",
+      "text": "Bilgi toplumu ile ilgili aşağıdaki ifadelerden hangisi doğrudur?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Çoğunluk geçimini sembol işleyerek kazanır."
+        },
+        {
+          "text": "Temel enerji kaynağı fosil yakıtlardır."
+        },
+        {
+          "text": "Toplumsal aşamanın sembolü büyük bilgisayar merkezleridir."
+        },
+        {
+          "text": "Zenginlik kaynağı topraktır."
+        },
+        {
+          "text": "Zaman tabiatın ritmine göre düzenlenir."
+        }
+      ],
+      "correctAnswerIndex": 0
+    },
+    {
+      "id": "gift-1767078845157-103-5rk",
+      "text": "Kullanıcının ihtiyacını karşılamak üzere birlikte çalışan bütün donanım, yazılım, personel, veri ve süreçlere ne ad verilir?",
+      "image": null,
+      "answers": [
+        {
+          "text": "Bilgi"
+        },
+        {
+          "text": "Bilgi Toplumu"
+        },
+        {
+          "text": "Bilgi Sistemleri"
+        },
+        {
+          "text": "Girdi Birimleri"
+        },
+        {
+          "text": "Çıktı Birimleri"
+        }
+      ],
+      "correctAnswerIndex": 2
+    }
+  ],
+  "selectedIds": [
+    "gift-1767078845157-101-ent",
+    "gift-1767078845157-60-jzp",
+    "gift-1767078845157-86-hbt",
+    "gift-1767078845157-44-4j2",
+    "gift-1767078845157-63-5x1",
+    "gift-1767078845157-74-xf9",
+    "gift-1767078845157-4-cu7",
+    "gift-1767078845157-69-5ks",
+    "gift-1767078845157-3-0vj",
+    "gift-1767078845157-93-ofr",
+    "gift-1767078845157-24-vax",
+    "gift-1767078845157-43-zos",
+    "gift-1767078845157-18-87c",
+    "gift-1767078845157-30-kb2",
+    "gift-1767078845157-6-fq1",
+    "gift-1767078845157-8-h9m",
+    "gift-1767078845157-23-8n7",
+    "gift-1767078845157-95-w3f",
+    "gift-1767078845157-103-5rk",
+    "gift-1767078845157-55-1xc",
+    "gift-1767078845157-19-i5b",
+    "gift-1767078845157-62-v6w",
+    "gift-1767078845157-53-s9x",
+    "gift-1767078845157-20-0sq",
+    "gift-1767078845157-25-nqw"
+  ],
+  "numberOfBooklets": 2,
+  "questionSpacing": 0,
+  "removeQuestionSpacing": false,
+  "questionFontFamily": "Times New Roman",
+  "questionFontSize": 10,
+  "headingFontFamily": "Times New Roman",
+  "headingFontSize": 12
+}

@@ -1,5 +1,5 @@
 
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import ReactDOM from 'react-dom/client';
 import { TestDetails, Question, Answer } from './types';
 import { QuestionEditor } from './components/QuestionEditor';
@@ -7,6 +7,7 @@ import { TestPreview } from './components/TestPreview';
 import { AnswerKeyPreview } from './components/AnswerKeyPreview';
 import { OpticalForm } from './components/OpticalForm';
 import { FontSelector } from './components/FontSelector';
+import { Modal } from './components/Modal';
 import { PlusIcon, TrashIcon, EditIcon, SpinnerIcon, DownloadIcon, UploadIcon } from './components/icons';
 import { Document, Paragraph, TextRun, HeadingLevel, AlignmentType, Table, TableRow, TableCell, WidthType, BorderStyle, Packer } from 'docx';
 import  saveAs  from 'file-saver';
@@ -83,27 +84,43 @@ const DetailInput: React.FC<{label: string, name: keyof TestDetails, value: stri
 );
 
 const App: React.FC = () => {
-  const [testDetails, setTestDetails] = useState<TestDetails>({
+  const [testDetails, setTestDetails] = useState<TestDetails & { studentNumberLength?: number }>({
     schoolYear: '2025 - 2026',
     faculty: 'BİLGİSAYAR VE BİLİŞİM BİLİMLERİ FAKÜLTESİ',
     department: 'DİJİTAL OYUN TASARIMI BÖLÜMÜ',
     course: 'TEMEL BİLGİ TEKNOLOJİLERİ',
     examType: 'ÇOKTAN SEÇMELİ TEST SINAVI',
-    booklet: 'A', // Default, will be overridden during generation
-    studentNumberLength: 10, // Varsayılan 10 karakter
+    booklet: 'A', 
+    studentNumberLength: 10, 
   });
   const [questions, setQuestions] = useState<Question[]>([]);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [numberOfBooklets, setNumberOfBooklets] = useState(2);
   const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [editingQuestion, setEditingQuestion] = useState<Question | null>(null);
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
-    const [questionSpacing, setQuestionSpacing] = useState<number>(100); // Sorular arası boşluk (docx spacing.after)
-    const [removeQuestionSpacing, setRemoveQuestionSpacing] = useState<boolean>(false);
-    const [questionFontFamily, setQuestionFontFamily] = useState<string>('Times New Roman');
-    const [questionFontSize, setQuestionFontSize] = useState<number>(10);
-    const [headingFontFamily, setHeadingFontFamily] = useState<string>('Times New Roman');
-    const [headingFontSize, setHeadingFontSize] = useState<number>(12);
+  const [questionSpacing, setQuestionSpacing] = useState<number>(100); 
+  const [removeQuestionSpacing, setRemoveQuestionSpacing] = useState<boolean>(false);
+  const [questionFontFamily, setQuestionFontFamily] = useState<string>('Times New Roman');
+  const [questionFontSize, setQuestionFontSize] = useState<number>(10);
+  const [headingFontFamily, setHeadingFontFamily] = useState<string>('Times New Roman');
+  const [headingFontSize, setHeadingFontSize] = useState<number>(12);
+  const [randomCount, setRandomCount] = useState<string>('');
   
+  // Modal States
+  const [modalConfig, setModalConfig] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    type: 'info' | 'danger' | 'warning';
+    onConfirm?: () => void;
+  }>({
+    isOpen: false,
+    title: '',
+    message: '',
+    type: 'info'
+  });
+
   const [currentlyRenderingPage, setCurrentlyRenderingPage] = useState<{ bookletType: string; questions: Question[]; startIndex: number } | null>(null);
   const [currentlyRenderingOpticalForm, setCurrentlyRenderingOpticalForm] = useState<string | null>(null);
   const [answerKeyData, setAnswerKeyData] = useState<Array<{ bookletType: string; questions: Question[] }> | null>(null);
@@ -117,6 +134,11 @@ const App: React.FC = () => {
   const opticalFormQueueRef = useRef<string[]>([]);
   const isGeneratingRef = useRef<boolean>(false);
 
+  // Filter selected questions for generation
+  const activeQuestions = useMemo(() => 
+    questions.filter(q => selectedIds.has(q.id)), 
+  [questions, selectedIds]);
+
   // Load all data from localStorage on initial render
   useEffect(() => {
     try {
@@ -124,8 +146,16 @@ const App: React.FC = () => {
         if (savedData) {
             const parsedData = JSON.parse(savedData);
             if (parsedData.testDetails) setTestDetails(parsedData.testDetails);
-            if (parsedData.questions) setQuestions(parsedData.questions);
-        if (parsedData.numberOfBooklets !== undefined) setNumberOfBooklets(Number(parsedData.numberOfBooklets));
+            if (parsedData.questions) {
+                setQuestions(parsedData.questions);
+                // By default select all loaded questions if no selection was saved
+                if (parsedData.selectedIds) {
+                    setSelectedIds(new Set(parsedData.selectedIds));
+                } else {
+                    setSelectedIds(new Set(parsedData.questions.map((q: Question) => q.id)));
+                }
+            }
+            if (parsedData.numberOfBooklets !== undefined) setNumberOfBooklets(Number(parsedData.numberOfBooklets));
             if (parsedData.questionSpacing !== undefined) setQuestionSpacing(parsedData.questionSpacing);
             if (parsedData.removeQuestionSpacing !== undefined) setRemoveQuestionSpacing(parsedData.removeQuestionSpacing);
             if (parsedData.questionFontFamily) setQuestionFontFamily(parsedData.questionFontFamily);
@@ -144,6 +174,7 @@ const App: React.FC = () => {
       const dataToSave = {
         testDetails,
         questions,
+        selectedIds: Array.from(selectedIds),
         numberOfBooklets,
         questionSpacing,
         removeQuestionSpacing,
@@ -156,7 +187,17 @@ const App: React.FC = () => {
     } catch (error) {
       console.error("Veri localStorage'a kaydedilemedi", error);
     }
-  }, [testDetails, questions, numberOfBooklets, questionSpacing, removeQuestionSpacing, questionFontFamily, questionFontSize, headingFontFamily, headingFontSize]);
+  }, [testDetails, questions, selectedIds, numberOfBooklets, questionSpacing, removeQuestionSpacing, questionFontFamily, questionFontSize, headingFontFamily, headingFontSize]);
+
+  const showModal = (title: string, message: string, type: 'info' | 'danger' | 'warning' = 'info', onConfirm?: () => void) => {
+    setModalConfig({
+      isOpen: true,
+      title,
+      message,
+      type,
+      onConfirm
+    });
+  };
 
   const handleDetailsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTestDetails({ ...testDetails, [e.target.name]: e.target.value });
@@ -180,65 +221,99 @@ const App: React.FC = () => {
     if (editingQuestion) {
       setQuestions(questions.map(q => q.id === question.id ? question : q));
     } else {
-      setQuestions([...questions, question]);
+      const newId = question.id || `q-${Date.now()}`;
+      const newQuestion = { ...question, id: newId };
+      setQuestions([...questions, newQuestion]);
+      // Auto select new question
+      setSelectedIds(prev => new Set(prev).add(newId));
     }
   };
 
   const deleteQuestion = (id: string) => {
-    if (window.confirm('Bu soruyu silmek istediğinizden emin misiniz?')) {
-        setQuestions(questions.filter(q => q.id !== id));
-    }
+    showModal(
+        'Soruyu Sil',
+        'Bu soruyu silmek istediğinizden emin misiniz?',
+        'danger',
+        () => {
+            setQuestions(questions.filter(q => q.id !== id));
+            setSelectedIds(prev => {
+                const next = new Set(prev);
+                next.delete(id);
+                return next;
+            });
+        }
+    );
   };
 
   const deleteAllQuestions = () => {
     if (questions.length === 0) {
-      alert('Silinecek soru bulunmuyor.');
+      showModal('Bilgi', 'Silinecek soru bulunmuyor.', 'info');
       return;
     }
-    if (!window.confirm('Tüm soruları silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.')) return;
-    setQuestions([]);
-    // Eğer o anda PDF/optik oluşturma işlemi varsa sıfırla
-    resetPdfGenerationState();
+    showModal(
+        'Tüm Soruları Sil',
+        'Tüm soruları silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.',
+        'danger',
+        () => {
+            setQuestions([]);
+            setSelectedIds(new Set());
+            resetPdfGenerationState();
+        }
+    );
+  };
+
+  const toggleSelection = (id: string) => {
+    setSelectedIds(prev => {
+        const next = new Set(prev);
+        if (next.has(id)) next.delete(id);
+        else next.add(id);
+        return next;
+    });
+  };
+
+  const selectAll = () => {
+    setSelectedIds(new Set(questions.map(q => q.id)));
+  };
+
+  const deselectAll = () => {
+    setSelectedIds(new Set());
+  };
+
+  const handleRandomSelect = () => {
+    const count = parseInt(randomCount);
+    if (isNaN(count) || count <= 0) {
+        showModal('Uyarı', 'Lütfen geçerli bir sayı girin.', 'warning');
+        return;
+    }
+    if (questions.length === 0) {
+        showModal('Uyarı', 'Soru havuzu boş.', 'warning');
+        return;
+    }
+    
+    const safeCount = Math.min(count, questions.length);
+    const shuffledIds = shuffleArray(questions.map(q => q.id));
+    const selection = shuffledIds.slice(0, safeCount);
+    setSelectedIds(new Set(selection));
+    showModal('Bilgi', `${safeCount} adet soru rasgele seçildi.`, 'info');
   };
   
   const shuffleQuestionsAndAnswers = (originalQuestions: Question[]): Question[] => {
-      // Soruları karıştır (originalIndex artık gerekli değil)
       const shuffledQuestions = shuffleArray(originalQuestions);
-      
-      // Her soru için cevapları karıştır
       return shuffledQuestions.map(q => {
           const validAnswers = q.answers.filter(a => a.text.trim() !== '');
-          
-          // Eğer geçerli cevap yoksa veya doğru cevap index'i geçersizse, sadece soruyu döndür
           if (validAnswers.length === 0 || q.correctAnswerIndex < 0 || q.correctAnswerIndex >= validAnswers.length) {
-             return { 
-                 ...q, 
-                 answers: q.answers
-             };
+             return { ...q, answers: q.answers };
           }
-          
-          // Doğru cevabın metnini bul
           const correctAnswerText = validAnswers[q.correctAnswerIndex]?.text;
-          
           if (!correctAnswerText) {
-             return { 
-                 ...q, 
-                 answers: shuffleArray(q.answers) 
-             };
+             return { ...q, answers: shuffleArray(q.answers) };
           }
-          
-          // Geçerli cevapları karıştır
           const shuffledValidAnswers = shuffleArray(validAnswers);
-          
-          // Yeni doğru cevap index'ini bul
           const newCorrectIndex = shuffledValidAnswers.findIndex(a => a.text === correctAnswerText);
-
-          // Boş cevapları ekle (eğer 5'ten az cevap varsa)
           const newAnswers = [...shuffledValidAnswers];
           while (newAnswers.length < q.answers.length) {
               newAnswers.push({ text: '' });
           }
-
           return {
               ...q,
               answers: newAnswers,
@@ -261,7 +336,7 @@ const App: React.FC = () => {
 
   const paginate = useCallback((allQuestions: Question[], bookletDetails: TestDetails): Promise<Question[][]> => {
     return new Promise((resolve, reject) => {
-        const A4_CONTENT_HEIGHT_PX = 900; // Use a safe height to avoid overflow
+        const A4_CONTENT_HEIGHT_PX = 900; 
         const measureRootEl = document.createElement('div');
         document.body.appendChild(measureRootEl);
         const measureRoot = ReactDOM.createRoot(measureRootEl);
@@ -294,8 +369,6 @@ const App: React.FC = () => {
 
                 const nextQuestion = remainingQuestions.shift()!;
                 const potentialPageQuestions = [...currentPageQuestions, nextQuestion];
-                
-                // Calculate the start index for this potential page
                 const startIndexForMeasure = allQuestions.length - remainingQuestions.length - potentialPageQuestions.length;
 
                 const handleMeasure = (height: number) => {
@@ -305,7 +378,6 @@ const App: React.FC = () => {
                     } else {
                         currentPageQuestions = potentialPageQuestions;
                     }
-                    // Process the next question in the next tick
                     setTimeout(processQuestion, 0);
                 };
 
@@ -323,21 +395,14 @@ const App: React.FC = () => {
                 reject(error);
             }
         };
-
         processQuestion();
     });
 }, []);
 
   const handleGeneratePdf = async () => {
-    console.log('handleGeneratePdf çağrıldı, isGeneratingRef:', isGeneratingRef.current, 'isGeneratingPdf:', isGeneratingPdf);
-    
-    if (isGeneratingRef.current) {
-        console.warn('PDF zaten oluşturuluyor (ref kontrolü), ikinci çağrı engellendi');
-        return;
-    }
-    
-    if (questions.length === 0) {
-        alert("PDF oluşturmadan önce lütfen en az bir soru ekleyin.");
+    if (isGeneratingRef.current) return;
+    if (activeQuestions.length === 0) {
+        showModal('Uyarı', "PDF oluşturmadan önce lütfen en az bir soru seçin.", 'warning');
         return;
     }
 
@@ -354,20 +419,17 @@ const App: React.FC = () => {
             const bookletType = String.fromCharCode(65 + i);
             booklets.push({
                 bookletType,
-                questions: shuffleQuestionsAndAnswers(JSON.parse(JSON.stringify(questions)))
+                questions: shuffleQuestionsAndAnswers(JSON.parse(JSON.stringify(activeQuestions)))
             });
         }
 
         setAnswerKeyData([...booklets]);
-        
         pageQueueRef.current = [];
 
         for (const [index, booklet] of booklets.entries()) {
             setPdfGenerationMessage(`Kitapçık ${booklet.bookletType} sayfalara ayrılıyor... (${index + 1}/${booklets.length})`);
             const bookletDetails = { ...testDetails, booklet: booklet.bookletType };
             const paginated = await paginate(booklet.questions, bookletDetails);
-            
-            console.log(`Kitapçık ${booklet.bookletType}: ${paginated.length} sayfa, ${booklet.questions.length} soru`);
             
             let questionIndex = 0;
             for (const pageQuestions of paginated) {
@@ -380,20 +442,15 @@ const App: React.FC = () => {
             }
         }
         
-        console.log(`Toplam ${pageQueueRef.current.length} sayfa kuyruğa eklendi`);
-
         const firstPage = pageQueueRef.current.shift();
         if (firstPage) {
-            console.log(`İlk sayfa render için ayarlanıyor: ${firstPage.bookletType}, ${firstPage.questions.length} soru, startIndex: ${firstPage.startIndex}`);
             setCurrentlyRenderingPage(firstPage);
         } else {
-            console.warn('Hiç sayfa oluşturulmadı!');
-            // No pages to render, move directly to answer key
             setCurrentlyRenderingPage(null); 
         }
     } catch (error) {
         console.error("PDF oluşturma başlatma hatası:", error);
-        alert("PDF oluşturma başlatılırken bir hata oluştu. Lütfen konsolu kontrol edin.");
+        showModal('Hata', "PDF oluşturma başlatılırken bir hata oluştu.", 'danger');
         resetPdfGenerationState();
     }
   };
@@ -402,6 +459,7 @@ const App: React.FC = () => {
     const dataToExport = {
       testDetails,
       questions,
+      selectedIds: Array.from(selectedIds),
       numberOfBooklets,
       questionSpacing,
       removeQuestionSpacing,
@@ -422,8 +480,9 @@ const App: React.FC = () => {
   };
 
   const handleExportGift = () => {
-    if (questions.length === 0) {
-        alert("Dışa aktarılacak soru bulunmuyor.");
+    const questionsToExport = activeQuestions.length > 0 ? activeQuestions : questions;
+    if (questionsToExport.length === 0) {
+        showModal('Uyarı', "Dışa aktarılacak soru bulunmuyor.", 'warning');
         return;
     }
 
@@ -431,7 +490,7 @@ const App: React.FC = () => {
         return text.replace(/([~=#{}])/g, '\\$1');
     };
 
-    const giftContent = questions.map((q, index) => {
+    const giftContent = questionsToExport.map((q, index) => {
         const title = `Soru ${index + 1}`;
         const text = `[html]${q.text}`;
 
@@ -470,27 +529,40 @@ const App: React.FC = () => {
         const importedData = JSON.parse(text);
   
         if (!importedData.testDetails || !Array.isArray(importedData.questions)) {
-           throw new Error("Geçersiz sınav verisi formatı. 'testDetails' ve 'questions' alanları bulunmalıdır.");
+           throw new Error("Geçersiz sınav verisi formatı.");
         }
   
-        if (questions.length > 0 && !window.confirm("Mevcut sınav bilgileri ve soruların üzerine yazılsın mı? Bu işlem geri alınamaz.")) {
-           return;
+        const loadData = () => {
+            setTestDetails(importedData.testDetails);
+            setQuestions(importedData.questions);
+            if (importedData.selectedIds) {
+                setSelectedIds(new Set(importedData.selectedIds));
+            } else {
+                setSelectedIds(new Set(importedData.questions.map((q: Question) => q.id)));
+            }
+            if (importedData.numberOfBooklets !== undefined) setNumberOfBooklets(Number(importedData.numberOfBooklets));
+            if (importedData.questionSpacing !== undefined) setQuestionSpacing(importedData.questionSpacing);
+            if (importedData.removeQuestionSpacing !== undefined) setRemoveQuestionSpacing(importedData.removeQuestionSpacing);
+            if (importedData.questionFontFamily) setQuestionFontFamily(importedData.questionFontFamily);
+            if (importedData.questionFontSize !== undefined) setQuestionFontSize(importedData.questionFontSize);
+            if (importedData.headingFontFamily) setHeadingFontFamily(importedData.headingFontFamily);
+            if (importedData.headingFontSize !== undefined) setHeadingFontSize(importedData.headingFontSize);
+            showModal('Başarılı', `Sınav detayları ve ${importedData.questions.length} soru başarıyla yüklendi.`, 'info');
+        };
+
+        if (questions.length > 0) {
+            showModal(
+                'Üzerine Yazılsın mı?',
+                "Mevcut sınav bilgileri ve soruların üzerine yazılsın mı? Bu işlem geri alınamaz.",
+                'warning',
+                loadData
+            );
+        } else {
+            loadData();
         }
-        setTestDetails(importedData.testDetails);
-        setQuestions(importedData.questions);
-        if (importedData.numberOfBooklets !== undefined) setNumberOfBooklets(Number(importedData.numberOfBooklets));
-        // restore UI settings if present
-        if (importedData.questionSpacing !== undefined) setQuestionSpacing(importedData.questionSpacing);
-        if (importedData.removeQuestionSpacing !== undefined) setRemoveQuestionSpacing(importedData.removeQuestionSpacing);
-        if (importedData.questionFontFamily) setQuestionFontFamily(importedData.questionFontFamily);
-        if (importedData.questionFontSize !== undefined) setQuestionFontSize(importedData.questionFontSize);
-        if (importedData.headingFontFamily) setHeadingFontFamily(importedData.headingFontFamily);
-        if (importedData.headingFontSize !== undefined) setHeadingFontSize(importedData.headingFontSize);
-        alert(`Sınav detayları ve ${importedData.questions.length} soru başarıyla yüklendi.`);
-  
       } catch (error) {
         console.error("Veri içe aktarma hatası:", error);
-        alert("Sınav verisi yüklenirken bir hata oluştu. Lütfen dosyanın doğru formatta olduğundan emin olun.");
+        showModal('Hata', "Sınav verisi yüklenirken bir hata oluştu. Dosya formatını kontrol edin.", 'danger');
       } finally {
           event.target.value = '';
       }
@@ -500,71 +572,63 @@ const App: React.FC = () => {
 
   const parseGiftFormat = (giftText: string): Question[] => {
     const parsedQuestions: Question[] = [];
-    const blocks = giftText.replace(/\r\n/g, '\n').split(/(?:\s*\n){2,}/);
+    const cleanText = giftText.replace(/\/\/.*$/gm, '');
+    const blocks = cleanText.split(/\n\s*\n/);
+    
+    let count = 0;
+    for (let rawBlock of blocks) {
+        let block = rawBlock.trim();
+        if (!block || !block.includes('{')) continue;
 
-    blocks.forEach((block, blockIndex) => {
-        block = block.trim();
-        if (!block || block.startsWith('//')) {
-            return; // Skip comments and empty blocks
+        const titleMatch = block.match(/^::(.*?)::/);
+        if (titleMatch) {
+            block = block.replace(/^::(.*?)::/, '').trim();
         }
 
-        const questionRegex = /(?:::(.*?)::)?(.*?)\{(.*?)\}/s;
-        const match = block.match(questionRegex);
+        const braceIndex = block.indexOf('{');
+        if (braceIndex === -1) continue;
 
-        if (!match) {
-            console.warn(`GIFT formatında soru ayrıştırılamadı: Blok ${blockIndex + 1}`);
-            return;
-        }
+        let questionText = block.substring(0, braceIndex).trim();
+        const answersContent = block.substring(braceIndex + 1, block.lastIndexOf('}')).trim();
 
-        const [, , textContent, answersContent] = match;
+        questionText = questionText.replace(/^\[(html|markdown|plain|moodle)\]/i, '').trim();
 
-        let questionText = textContent.trim();
-        if (questionText.startsWith('[html]')) {
-            questionText = questionText.substring(6).trim();
-        }
-
-        const answerLines = answersContent.trim().split('\n').filter(line => line.trim().match(/^[=~]/));
-        
         const answers: Answer[] = [];
         let correctAnswerIndex = -1;
+        
+        const parts = answersContent.split(/([=~])/);
+        for (let i = 1; i < parts.length; i += 2) {
+            const prefix = parts[i];
+            const content = parts[i + 1];
+            if (!content) continue;
 
-        answerLines.forEach(line => {
-            const trimmedLine = line.trim();
-            const isCorrect = trimmedLine.startsWith('=');
-            
-            const text = trimmedLine
-                .replace(/^[=~]/, '')
-                .replace(/#.*$/, '')
-                .replace(/~?%-?\d+(\.\d+)?%/, '')
-                .trim();
+            let ansText = content.split(/[#~=}]/)[0].trim();
+            ansText = ansText.replace(/^%-?\d+(\.\d+)?%/, '').trim();
 
-            if (text) {
-                answers.push({ text });
-                if (isCorrect) {
+            if (ansText) {
+                answers.push({ text: ansText });
+                if (prefix === '=') {
                     correctAnswerIndex = answers.length - 1;
                 }
             }
-        });
+        }
 
-        if (questionText && answers.length >= 2 && correctAnswerIndex !== -1) {
-            while (answers.length < 5) {
-                answers.push({ text: '' });
-            }
-
+        if (questionText && answers.length >= 2) {
+            const finalAnswers = [...answers];
+            while (finalAnswers.length < 5) finalAnswers.push({ text: '' });
+            
             parsedQuestions.push({
-                id: new Date().toISOString() + `-${blockIndex}-${Math.random()}`,
+                id: `gift-${Date.now()}-${count++}-${Math.random().toString(36).substring(2, 5)}`,
                 text: questionText,
                 image: null,
-                answers: answers,
-                correctAnswerIndex: correctAnswerIndex,
+                answers: finalAnswers,
+                correctAnswerIndex: correctAnswerIndex !== -1 ? correctAnswerIndex : 0,
             });
-        } else {
-            console.warn(`GIFT bloğu geçerli bir soruya dönüştürülemedi: Blok ${blockIndex + 1}`);
         }
-    });
-
+    }
+    
     return parsedQuestions;
-};
+  };
 
 const handleImportGift = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -575,47 +639,42 @@ const handleImportGift = (event: React.ChangeEvent<HTMLInputElement>) => {
       try {
         const text = e.target?.result;
         if (typeof text !== 'string') throw new Error("Dosya metin olarak okunamadı.");
-        
         const importedQuestions = parseGiftFormat(text);
-  
         if (importedQuestions.length === 0) {
-            alert("Dosya içinde geçerli GIFT formatında soru bulunamadı.");
+            showModal('Hata', "Dosya içinde geçerli GIFT formatında soru bulunamadı. Lütfen formatı kontrol edin.", 'warning');
             return;
         }
-  
-        if (questions.length > 0 && !window.confirm(`GIFT dosyasından ${importedQuestions.length} soru bulundu. Mevcut sorular silinip yenileri eklensin mi? Bu işlem geri alınamaz.`)) {
-           return;
+        const applyImport = () => {
+            setQuestions(importedQuestions);
+            setSelectedIds(new Set(importedQuestions.map(q => q.id)));
+            showModal('Başarılı', `${importedQuestions.length} soru başarıyla yüklendi.`, 'info');
+        };
+        if (questions.length > 0) {
+            showModal(
+                'Sorular Değiştirilsin mi?',
+                `GIFT dosyasından ${importedQuestions.length} soru bulundu. Mevcut sorular silinip yenileri eklensin mi?`,
+                'warning',
+                applyImport
+            );
+        } else {
+            applyImport();
         }
-        
-        setQuestions(importedQuestions);
-        alert(`${importedQuestions.length} soru başarıyla yüklendi.`);
-  
       } catch (error) {
         console.error("GIFT verisi içe aktarma hatası:", error);
-        alert("GIFT verisi yüklenirken bir hata oluştu. Lütfen dosyanın doğru formatta olduğundan emin olun ve konsolu kontrol edin.");
+        showModal('Hata', "GIFT verisi yüklenirken bir hata oluştu.", 'danger');
       } finally {
-          event.target.value = ''; // Reset file input
+          event.target.value = '';
       }
     };
     reader.readAsText(file);
 };
 
-  
-  /**
- * Word için optik form içeriği oluşturur (Görsel format)
- * @param bookletType - Kitapçık harfi (A, B, C, D)
- * @param questionCount - Toplam soru sayısı
- * @param studentNumberLength - Öğrenci numarası karakter sayısı (kullanılmıyor, basit format)
- * @returns docx paragraf ve tablo elemanları dizisi
- */
 const generateOpticalFormContent = (
   bookletType: string, 
   questionCount: number, 
   studentNumberLength: number
 ): any[] => {
   const children: any[] = [];
-    
-  // ÜST BİLGİLER (AD-SOYAD, NUMARA, PUAN)
   children.push(
     new Paragraph({
       children: [
@@ -633,14 +692,10 @@ const generateOpticalFormContent = (
     }),
   );
 
-  // CEVAP TABLOSU - 2 SÜTUNLU DÜZENİ
   const answersPerColumn = Math.ceil(questionCount / 2);
   const tableRows: TableRow[] = [];
-
-  // Başlık satırı
   const headerRow = new TableRow({
     children: [
-      // Sol sütun başlık
       new TableCell({
         children: [new Paragraph({ text: "", alignment: AlignmentType.CENTER })],
         width: { size: 5, type: WidthType.PERCENTAGE },
@@ -666,7 +721,6 @@ const generateOpticalFormContent = (
           }
         })
       ),
-      // Orta boşluk
       new TableCell({
         children: [new Paragraph({ text: "" })],
         width: { size: 1, type: WidthType.PERCENTAGE },
@@ -677,7 +731,6 @@ const generateOpticalFormContent = (
           right: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" }
         }
       }),
-      // Sağ sütun başlık
       new TableCell({
         children: [new Paragraph({ text: "", alignment: AlignmentType.CENTER })],
         width: { size: 5, type: WidthType.PERCENTAGE },
@@ -707,22 +760,13 @@ const generateOpticalFormContent = (
   });
   tableRows.push(headerRow);
 
-  // Soru satırları
   for (let row = 0; row < answersPerColumn; row++) {
     const leftQuestionNum = row + 1;
     const rightQuestionNum = row + answersPerColumn + 1;
-    
     const cells: TableCell[] = [];
-    
-    // Sol sütun - Soru numarası
     cells.push(
       new TableCell({
-        children: [
-          new Paragraph({ 
-            children: [new TextRun({ text: `${leftQuestionNum}`, bold: true, size: questionFontSize*2, font: questionFontFamily })],
-            alignment: AlignmentType.CENTER
-          })
-        ],
+        children: [new Paragraph({ children: [new TextRun({ text: `${leftQuestionNum}`, bold: true, size: questionFontSize*2, font: questionFontFamily })], alignment: AlignmentType.CENTER })],
         width: { size: 5, type: WidthType.PERCENTAGE },
         borders: {
           top: { style: BorderStyle.SINGLE, size: 10, color: "000000" },
@@ -732,17 +776,10 @@ const generateOpticalFormContent = (
         }
       })
     );
-    
-    // Sol sütun - Cevap daireleri (A, B, C, D, E)
     for (let opt = 0; opt < 5; opt++) {
       cells.push(
         new TableCell({
-          children: [
-            new Paragraph({
-                children: [new TextRun({ text: "O", size: questionFontSize*2, font: questionFontFamily })],
-              alignment: AlignmentType.CENTER
-            })
-          ],
+          children: [new Paragraph({ children: [new TextRun({ text: "O", size: questionFontSize*2, font: questionFontFamily })], alignment: AlignmentType.CENTER })],
           width: { size: 8.5, type: WidthType.PERCENTAGE },
           margins: { top: 30, bottom: 30 },
           borders: {
@@ -754,8 +791,6 @@ const generateOpticalFormContent = (
         })
       );
     }
-    
-    // Orta boşluk
     cells.push(
       new TableCell({
         children: [new Paragraph({ text: "" })],
@@ -768,17 +803,10 @@ const generateOpticalFormContent = (
         }
       })
     );
-    
-    // Sağ sütun - Soru numarası veya boş
     if (rightQuestionNum <= questionCount) {
       cells.push(
         new TableCell({
-          children: [
-            new Paragraph({ 
-              children: [new TextRun({ text: `${rightQuestionNum}`, bold: true, size: questionFontSize*2, font: questionFontFamily })],
-              alignment: AlignmentType.CENTER
-            })
-          ],
+          children: [new Paragraph({ children: [new TextRun({ text: `${rightQuestionNum}`, bold: true, size: questionFontSize*2, font: questionFontFamily })], alignment: AlignmentType.CENTER })],
           width: { size: 5, type: WidthType.PERCENTAGE },
           borders: {
             top: { style: BorderStyle.SINGLE, size: 10, color: "000000" },
@@ -788,17 +816,10 @@ const generateOpticalFormContent = (
           }
         })
       );
-      
-      // Sağ sütun - Cevap daireleri
       for (let opt = 0; opt < 5; opt++) {
         cells.push(
           new TableCell({
-            children: [
-              new Paragraph({
-                children: [new TextRun({ text: "O", size: questionFontSize*2, font: questionFontFamily })],
-                alignment: AlignmentType.CENTER
-              })
-            ],
+            children: [new Paragraph({ children: [new TextRun({ text: "O", size: questionFontSize*2, font: questionFontFamily })], alignment: AlignmentType.CENTER })],
             width: { size: 8.5, type: WidthType.PERCENTAGE },
             margins: { top: 30, bottom: 30 },
             borders: {
@@ -811,397 +832,143 @@ const generateOpticalFormContent = (
         );
       }
     } else {
-      // Sağ sütun boş (soru sayısı tek sayı ise)
-      cells.push(
-        new TableCell({
-          children: [new Paragraph({ text: "" })],
-          width: { size: 5, type: WidthType.PERCENTAGE },
-          borders: {
-            top: { style: BorderStyle.SINGLE, size: 10, color: "000000" },
-            left: { style: BorderStyle.SINGLE, size: 15, color: "000000" },
-            bottom: { style: BorderStyle.SINGLE, size: 10, color: "000000" },
-            right: { style: BorderStyle.SINGLE, size: 10, color: "000000" }
-          }
-        })
-      );
-      
+      cells.push(new TableCell({ children: [new Paragraph({ text: "" })], width: { size: 5, type: WidthType.PERCENTAGE }, borders: { top: { style: BorderStyle.SINGLE, size: 10, color: "000000" }, left: { style: BorderStyle.SINGLE, size: 15, color: "000000" }, bottom: { style: BorderStyle.SINGLE, size: 10, color: "000000" }, right: { style: BorderStyle.SINGLE, size: 10, color: "000000" } } }));
       for (let opt = 0; opt < 5; opt++) {
-        cells.push(
-          new TableCell({
-            children: [new Paragraph({ text: "" })],
-            width: { size: 8.5, type: WidthType.PERCENTAGE },
-            borders: {
-              top: { style: BorderStyle.SINGLE, size: 10, color: "000000" },
-              left: { style: BorderStyle.SINGLE, size: 10, color: "000000" },
-              bottom: { style: BorderStyle.SINGLE, size: 10, color: "000000" },
-              right: { style: BorderStyle.SINGLE, size: 10, color: "000000" }
-            }
-          })
-        );
+        cells.push(new TableCell({ children: [new Paragraph({ text: "" })], width: { size: 8.5, type: WidthType.PERCENTAGE }, borders: { top: { style: BorderStyle.SINGLE, size: 10, color: "000000" }, left: { style: BorderStyle.SINGLE, size: 10, color: "000000" }, bottom: { style: BorderStyle.SINGLE, size: 10, color: "000000" }, right: { style: BorderStyle.SINGLE, size: 10, color: "000000" } } }));
       }
     }
-    
     tableRows.push(new TableRow({ children: cells }));
   }
-
-  const mainAnswerTable = new Table({
-    rows: tableRows,
-    width: { size: 100, type: WidthType.PERCENTAGE }
-  });
-
+  const mainAnswerTable = new Table({ rows: tableRows, width: { size: 100, type: WidthType.PERCENTAGE } });
   children.push(mainAnswerTable);
-
-  // Children array'i döndür
   return children;
 };
 
   const handleGenerateWordColumns = async () => {
-    if (questions.length === 0) {
-        alert("Word dosyası oluşturmadan önce lütfen en az bir soru ekleyin.");
+    if (activeQuestions.length === 0) {
+        showModal('Uyarı', "Word dosyası oluşturmadan önce lütfen en az bir soru seçin.", 'warning');
         return;
     }
-
     try {
         const booklets = [];
         for (let i = 0; i < numberOfBooklets; i++) {
             const bookletType = String.fromCharCode(65 + i);
             booklets.push({
                 bookletType,
-                questions: shuffleQuestionsAndAnswers(JSON.parse(JSON.stringify(questions)))
+                questions: shuffleQuestionsAndAnswers(JSON.parse(JSON.stringify(activeQuestions)))
             });
         }
-
         const sections = [];
-
-        // Her kitapçık için section oluştur
         for (const booklet of booklets) {
             const children: any[] = [];
-
-            // Başlık bilgileri (font/boyut ayarlarını uygula)
             children.push(
-                new Paragraph({
-                    children: [new TextRun({ text: `${testDetails.schoolYear} EĞİTİM - ÖĞRETİM YILI`, size: headingFontSize*2, font: headingFontFamily })],
-                    heading: HeadingLevel.HEADING_2,
-                    alignment: AlignmentType.CENTER,
-                }),
-                new Paragraph({
-                    children: [new TextRun({ text: `${testDetails.faculty.toUpperCase()}`, size: headingFontSize*2, font: headingFontFamily })],
-                    alignment: AlignmentType.CENTER,
-                }),
-                new Paragraph({
-                    children: [new TextRun({ text: `${testDetails.department.toUpperCase()}`, size: headingFontSize*2, font: headingFontFamily })],
-                    alignment: AlignmentType.CENTER,
-                }),
-                new Paragraph({
-                    children: [new TextRun({ text: `${testDetails.course.toUpperCase()} DERSİ ${testDetails.examType.toUpperCase()} SORULARI`, size: headingFontSize*2, font: headingFontFamily })],
-                    alignment: AlignmentType.CENTER,
-                    spacing: { after: 200 }
-                })
+                new Paragraph({ children: [new TextRun({ text: `${testDetails.schoolYear} EĞİTİM - ÖĞRETİM YILI`, size: headingFontSize*2, font: headingFontFamily })], heading: HeadingLevel.HEADING_2, alignment: AlignmentType.CENTER }),
+                new Paragraph({ children: [new TextRun({ text: `${testDetails.faculty.toUpperCase()}`, size: headingFontSize*2, font: headingFontFamily })], alignment: AlignmentType.CENTER }),
+                new Paragraph({ children: [new TextRun({ text: `${testDetails.department.toUpperCase()}`, size: headingFontSize*2, font: headingFontFamily })], alignment: AlignmentType.CENTER }),
+                new Paragraph({ children: [new TextRun({ text: `${testDetails.course.toUpperCase()} DERSİ ${testDetails.examType.toUpperCase()} SORULARI`, size: headingFontSize*2, font: headingFontFamily })], alignment: AlignmentType.CENTER, spacing: { after: 200 } })
             );
-
-            // Öğrenci bilgileri ve kitapçık
             children.push(
-                new Paragraph({
-                    children: [
-                        new TextRun({ text: "AD-SOYAD:\t", bold: true, size: questionFontSize*2, font: questionFontFamily }),
-                        new TextRun({ text: "_____________________________", size: questionFontSize*2, font: questionFontFamily }),
-                    ],
-                    spacing: { after: 100 }
-                }),
-                new Paragraph({
-                    children: [
-                        new TextRun({ text: "NUMARA:\t", bold: true, size: questionFontSize*2, font: questionFontFamily }),
-                        new TextRun({ text: "_____________________________", size: questionFontSize*2, font: questionFontFamily }),
-                    ],
-                    spacing: { after: 100 }
-                }),
-                new Paragraph({
-                    children: [new TextRun({ text: `${booklet.bookletType} KİTAPÇIĞI`, size: headingFontSize*2, font: headingFontFamily })],
-                    heading: HeadingLevel.HEADING_1,
-                    alignment: AlignmentType.CENTER,
-                    spacing: { after: 400 }
-                }),
+                new Paragraph({ children: [new TextRun({ text: "AD-SOYAD:\t", bold: true, size: questionFontSize*2, font: questionFontFamily }), new TextRun({ text: "_____________________________", size: questionFontSize*2, font: questionFontFamily })], spacing: { after: 100 } }),
+                new Paragraph({ children: [new TextRun({ text: "NUMARA:\t", bold: true, size: questionFontSize*2, font: questionFontFamily }), new TextRun({ text: "_____________________________", size: questionFontSize*2, font: questionFontFamily })], spacing: { after: 100 } }),
+                new Paragraph({ children: [new TextRun({ text: `${booklet.bookletType} KİTAPÇIĞI`, size: headingFontSize*2, font: headingFontFamily })], heading: HeadingLevel.HEADING_1, alignment: AlignmentType.CENTER, spacing: { after: 400 } }),
             );
-
-            // Sorular - Native iki sütun kullanarak
             booklet.questions.forEach((q, index) => {
-                // Soru metni - paragraf yapısını koru
                 const questionText = htmlToTextWithBreaks(q.text);
                 const questionLines = questionText.split('\n').filter(line => line.trim() !== '');
-                
                 questionLines.forEach((line, lineIndex) => {
                     if (lineIndex === 0) {
-                        // İlk satırda soru numarasını ekle - sayfa sonuna bölünmemesi için keepNext ve keepLines
-                        children.push(
-                            new Paragraph({
-                                children: [
-                                    new TextRun({ text: `${index + 1}. `, bold: true, size: questionFontSize*2, font: questionFontFamily }),
-                                    new TextRun({ text: line.trim(), size: questionFontSize*2, font: questionFontFamily })
-                                ],
-                                spacing: { after: 0 },
-                                keepNext: true,
-                                keepLines: true
-                            })
-                        );
+                        children.push(new Paragraph({ children: [new TextRun({ text: `${index + 1}. `, bold: true, size: questionFontSize*2, font: questionFontFamily }), new TextRun({ text: line.trim(), size: questionFontSize*2, font: questionFontFamily })], spacing: { after: 0 }, keepNext: true, keepLines: true }));
                     } else {
-                        // Diğer satırları girintili olarak ekle
-                        children.push(
-                            new Paragraph({
-                                children: [new TextRun({ text: line.trim(), size: questionFontSize*2, font: questionFontFamily })],
-                                spacing: { after: 0 },
-                                indent: { left: 200 },
-                                keepNext: true,
-                                keepLines: true
-                            })
-                        );
+                        children.push(new Paragraph({ children: [new TextRun({ text: line.trim(), size: questionFontSize*2, font: questionFontFamily })], spacing: { after: 0 }, indent: { left: 200 }, keepNext: true, keepLines: true }));
                     }
                 });
-
-                // Cevap şıkları
                 q.answers.filter(a => a.text.trim() !== '').forEach((ans, idx) => {
-                    children.push(
-                        new Paragraph({
-                            children: [
-                                new TextRun({ text: `${String.fromCharCode(97 + idx)}) `, size: questionFontSize*2, font: questionFontFamily }),
-                                new TextRun({ text: ans.text, size: questionFontSize*2, font: questionFontFamily })
-                            ],
-                            spacing: { after: 0 },
-                            indent: { left: 200 },
-                            keepNext: true,
-                            keepLines: true
-                        })
-                    );
+                    children.push(new Paragraph({ children: [new TextRun({ text: `${String.fromCharCode(97 + idx)}) `, size: questionFontSize*2, font: questionFontFamily }), new TextRun({ text: ans.text, size: questionFontSize*2, font: questionFontFamily })], spacing: { after: 0 }, indent: { left: 200 }, keepNext: true, keepLines: true }));
                 });
-
-                // Sorular arasında boşluk (keepNext kaldır, son paragraf) - kullanıcı opsiyonuna göre ekle
-                //if (!removeQuestionSpacing) {
-                    children.push(
-                        new Paragraph({
-                            style: "soruarasi",
-                            text: "",
-                            spacing: { after: questionSpacing }
-                        })
-                    );
-                //}
+                children.push(new Paragraph({ style: "soruarasi", text: "", spacing: { after: questionSpacing } }));
             });
-
-            // Her kitapçığın sonuna optik formu ekle (aynı section içinde)
-            const opticalFormContent = generateOpticalFormContent(
-                booklet.bookletType,
-                questions.length, // Orijinal soru sayısı
-                testDetails.studentNumberLength ?? 10 // Öğrenci no karakter sayısı
-            );
+            const opticalFormContent = generateOpticalFormContent(booklet.bookletType, activeQuestions.length, testDetails.studentNumberLength ?? 10);
             children.push(...opticalFormContent);
-
             sections.push({
-                properties: {
-                    page: {
-                        margin: { top: 1000, right: 1000, bottom: 1000, left: 1000 }
-                    },
-                    column: {
-                        space: 708, // 708 twips = yaklaşık 1.25 cm
-                        count: 2,
-                        separate: true
-                    }
-                },
+                properties: { page: { margin: { top: 1000, right: 1000, bottom: 1000, left: 1000 } }, column: { space: 708, count: 2, separate: true } },
                 children
             });
         }
-
-        // Cevap Anahtarı Sayfası - Her satır soru numarası, sonrasında kitapçık gruplarının cevapları
-        const answerKeyChildren: any[] = [
-          new Paragraph({
-            text: `${testDetails.course.toUpperCase()} DERSİ CEVAP ANAHTARI`,
-            heading: HeadingLevel.HEADING_1,
-            alignment: AlignmentType.CENTER,
-            spacing: { after: 400 }
-          })
-        ];
-
+        const answerKeyChildren: any[] = [new Paragraph({ text: `${testDetails.course.toUpperCase()} DERSİ CEVAP ANAHTARI`, heading: HeadingLevel.HEADING_1, alignment: AlignmentType.CENTER, spacing: { after: 400 } })];
         if (booklets.length > 0) {
-          // Başlık satırı: # | A Grubu | B Grubu | ...
           const headerCells: TableCell[] = [];
-          const firstColSize = 10; // yüzde
+          const firstColSize = 10;
           const otherColSize = Math.floor((100 - firstColSize) / booklets.length);
-
-          headerCells.push(new TableCell({
-            children: [new Paragraph({ children: [new TextRun({ text: '#', bold: true })], alignment: AlignmentType.CENTER })],
-            width: { size: firstColSize, type: WidthType.PERCENTAGE }
-          }));
-
-          for (const b of booklets) {
-            headerCells.push(new TableCell({
-              children: [new Paragraph({ children: [new TextRun({ text: `${b.bookletType} Grubu`, bold: true })], alignment: AlignmentType.CENTER })],
-              width: { size: otherColSize, type: WidthType.PERCENTAGE }
-            }));
-          }
-
+          headerCells.push(new TableCell({ children: [new Paragraph({ children: [new TextRun({ text: '#', bold: true })], alignment: AlignmentType.CENTER })], width: { size: firstColSize, type: WidthType.PERCENTAGE } }));
+          for (const b of booklets) headerCells.push(new TableCell({ children: [new Paragraph({ children: [new TextRun({ text: `${b.bookletType} Grubu`, bold: true })], alignment: AlignmentType.CENTER })], width: { size: otherColSize, type: WidthType.PERCENTAGE } }));
           const rows: TableRow[] = [];
           rows.push(new TableRow({ children: headerCells }));
-
-          // Satır sayısını en uzun kitapçığa göre al (genelde hepsi eşit)
           const totalQuestions = Math.max(...booklets.map(b => b.questions.length));
-
           for (let qi = 0; qi < totalQuestions; qi++) {
             const cells: TableCell[] = [];
-            cells.push(new TableCell({
-              children: [new Paragraph({ text: String(qi + 1), alignment: AlignmentType.CENTER })],
-              width: { size: firstColSize, type: WidthType.PERCENTAGE }
-            }));
-
+            cells.push(new TableCell({ children: [new Paragraph({ text: String(qi + 1), alignment: AlignmentType.CENTER })], width: { size: firstColSize, type: WidthType.PERCENTAGE } }));
             for (const b of booklets) {
               let letter = '';
               const q = b.questions[qi];
-              if (q && typeof q.correctAnswerIndex === 'number' && q.correctAnswerIndex >= 0) {
-                letter = String.fromCharCode(65 + q.correctAnswerIndex);
-              }
-              cells.push(new TableCell({
-                children: [new Paragraph({ text: letter, alignment: AlignmentType.CENTER })],
-                width: { size: otherColSize, type: WidthType.PERCENTAGE }
-              }));
+              if (q && typeof q.correctAnswerIndex === 'number' && q.correctAnswerIndex >= 0) letter = String.fromCharCode(65 + q.correctAnswerIndex);
+              cells.push(new TableCell({ children: [new Paragraph({ text: letter, alignment: AlignmentType.CENTER })], width: { size: otherColSize, type: WidthType.PERCENTAGE } }));
             }
-
             rows.push(new TableRow({ children: cells }));
           }
-
-          const answerTable = new Table({
-            rows,
-            width: { size: 100, type: WidthType.PERCENTAGE },
-            borders: {
-              top: { style: BorderStyle.SINGLE, size: 10, color: "CCCCCC" },
-              bottom: { style: BorderStyle.SINGLE, size: 10, color: "CCCCCC" },
-              left: { style: BorderStyle.SINGLE, size: 10, color: "CCCCCC" },
-              right: { style: BorderStyle.SINGLE, size: 10, color: "CCCCCC" },
-              insideHorizontal: { style: BorderStyle.SINGLE, size: 5, color: "EEEEEE" },
-              insideVertical: { style: BorderStyle.SINGLE, size: 5, color: "EEEEEE" }
-            }
-          });
-
+          const answerTable = new Table({ rows, width: { size: 100, type: WidthType.PERCENTAGE }, borders: { top: { style: BorderStyle.SINGLE, size: 10, color: "CCCCCC" }, bottom: { style: BorderStyle.SINGLE, size: 10, color: "CCCCCC" }, left: { style: BorderStyle.SINGLE, size: 10, color: "CCCCCC" }, right: { style: BorderStyle.SINGLE, size: 10, color: "CCCCCC" }, insideHorizontal: { style: BorderStyle.SINGLE, size: 5, color: "EEEEEE" }, insideVertical: { style: BorderStyle.SINGLE, size: 5, color: "EEEEEE" } } });
           answerKeyChildren.push(answerTable);
         }
-
-        sections.push({
-          properties: {
-            page: {
-              margin: { top: 1000, right: 1000, bottom: 1000, left: 1000 }
-            }
-          },
-          children: answerKeyChildren
-        });
-
-        const doc = new Document({
-            styles:{paragraphStyles:[{
-                id: "soruarasi",
-                name: "Soru Arası Boşluk",
-                basedOn: "Normal",
-                next: "Normal",
-                run: {
-                    size: 2,
-                },
-            },]},
-            sections
-        });
-
+        sections.push({ properties: { page: { margin: { top: 1000, right: 1000, bottom: 1000, left: 1000 } } }, children: answerKeyChildren });
+        const doc = new Document({ styles:{paragraphStyles:[{ id: "soruarasi", name: "Soru Arası Boşluk", basedOn: "Normal", next: "Normal", run: { size: 2 }, }]}, sections });
         const blob = await Packer.toBlob(doc);
         saveAs(blob, `test_${testDetails.course.replace(/\s/g, '_')}_2sutun.docx`);
-        //alert('Word dosyası (2 Sütun) başarıyla oluşturuldu!');
-
     } catch (error) {
         console.error("Word dosyası oluşturma hatası:", error);
-        alert("Word dosyası oluşturulurken bir hata oluştu. Lütfen konsolu kontrol edin.");
+        showModal('Hata', "Word dosyası oluşturulurken bir hata oluştu.", 'danger');
     }
 };
   
   // Effect to handle rendering of test pages
   useEffect(() => {
     if (!isGeneratingPdf) return;
-
     if (currentlyRenderingPage) {
         const generatePage = async () => {
           if (!previewRef.current) {
-              console.error('Preview ref not ready, retrying...');
-              // Retry after a short delay
-              setTimeout(() => {
-                  if (currentlyRenderingPage) {
-                      setCurrentlyRenderingPage({...currentlyRenderingPage});
-                  }
-              }, 100);
+              setTimeout(() => { if (currentlyRenderingPage) setCurrentlyRenderingPage({...currentlyRenderingPage}); }, 100);
               return;
           }
-          
           const currentPageNum = pdfDocRef.current.internal.getNumberOfPages();
           setPdfGenerationMessage(`Sayfa ${currentPageNum} render ediliyor (${currentlyRenderingPage.questions.length} soru)...`);
-          
-          console.log('PreviewRef içeriği:', {
-            hasRef: !!previewRef.current,
-            scrollHeight: previewRef.current?.scrollHeight,
-            childrenCount: previewRef.current?.children.length
-          });
-          
           try {
-            // Render'ın tamamlanması için kısa bir bekleme
             await new Promise(resolve => setTimeout(resolve, 200));
-            
-            const canvas = await html2canvas(previewRef.current, { 
-                scale: 2,
-                logging: true,
-                useCORS: true,
-                allowTaint: true
-            });
-            
-            console.log('Canvas oluşturuldu:', {
-                width: canvas.width,
-                height: canvas.height,
-                isEmpty: canvas.width === 0 || canvas.height === 0
-            });
-            
+            const canvas = await html2canvas(previewRef.current, { scale: 2, logging: false, useCORS: true, allowTaint: true });
             if (canvas.width === 0 || canvas.height === 0) {
-                console.error('Canvas boş! Render edilemiyor.');
-                alert('Sayfa render hatası: Canvas boş. Lütfen konsolda hata detaylarını kontrol edin.');
+                showModal('Hata', 'Sayfa render hatası: Canvas boş.', 'danger');
                 resetPdfGenerationState();
                 return;
             }
-            
             const imgData = canvas.toDataURL('image/jpeg', 0.95);
-            
             const pdf = pdfDocRef.current;
-            
-            // İlk sayfayı kontrol et - eğer boşsa yeni sayfa ekleme
             const isFirstPage = pdf.internal.getNumberOfPages() === 1;
-            if (!isFirstPage) {
-                pdf.addPage();
-            }
-
+            if (!isFirstPage) pdf.addPage();
             const a4Width_mm = pdf.internal.pageSize.getWidth();
             const imgProps = pdf.getImageProperties(imgData);
             const pdfHeight = (imgProps.height * a4Width_mm) / imgProps.width;
-            
             pdf.addImage(imgData, 'JPEG', 0, 0, a4Width_mm, pdfHeight);
-
-            console.log(`Sayfa eklendi. Kuyruktaki sayfa sayısı: ${pageQueueRef.current.length}`);
-            
             const nextPage = pageQueueRef.current.shift();
-            if (nextPage) {
-                console.log(`Sonraki sayfa: ${nextPage.bookletType}, ${nextPage.questions.length} soru, startIndex: ${nextPage.startIndex}`);
-                setCurrentlyRenderingPage(nextPage);
-            } else {
-                console.log('Tüm sayfalar tamamlandı, cevap anahtarına geçiliyor');
-                // Tüm sayfalar tamamlandı, cevap anahtarına geç
-                setCurrentlyRenderingPage(null);
-            }
+            if (nextPage) setCurrentlyRenderingPage(nextPage);
+            else setCurrentlyRenderingPage(null);
           } catch (error) {
             console.error("PDF sayfası oluşturma hatası:", error);
-            alert("PDF oluşturulurken bir hata oluştu. Lütfen konsolu kontrol edin.");
+            showModal('Hata', "PDF oluşturulurken bir hata oluştu.", 'danger');
             resetPdfGenerationState();
           }
         };
         const timer = setTimeout(generatePage, 200);
         return () => clearTimeout(timer);
     } else if (answerKeyData && !currentlyRenderingPage && pageQueueRef.current.length === 0) {
-        // All pages are rendered, move to Answer Key and Optical Forms
         const generatePostPages = async () => {
             try {
-                // 1. Generate Answer Key
                 if (answerKeyRef.current) {
                     setPdfGenerationMessage('Cevap anahtarı oluşturuluyor...');
                     const answerCanvas = await html2canvas(answerKeyRef.current, { scale: 2 });
@@ -1213,22 +980,14 @@ const generateOpticalFormContent = (
                     const answerPdfHeight = (answerImgProps.height * a4Width_mm) / answerImgProps.width;
                     pdf.addImage(answerImgData, 'JPEG', 0, 0, a4Width_mm, answerPdfHeight);
                 }
-                
-                // 2. Start optical form queue
                 const opticalFormBooklets = answerKeyData?.map(b => b.bookletType) ?? [];
                 opticalFormQueueRef.current = opticalFormBooklets;
-
                 const nextFormBooklet = opticalFormQueueRef.current.shift();
-                if (nextFormBooklet) {
-                    setCurrentlyRenderingOpticalForm(nextFormBooklet);
-                } else {
-                    pdfDocRef.current.save(`test_${testDetails.course.replace(/\s/g, '_')}_cevapli.pdf`);
-                    resetPdfGenerationState();
-                }
-
+                if (nextFormBooklet) setCurrentlyRenderingOpticalForm(nextFormBooklet);
+                else { pdfDocRef.current.save(`test_${testDetails.course.replace(/\s/g, '_')}_cevapli.pdf`); resetPdfGenerationState(); }
             } catch (error) {
                 console.error("Cevap anahtarı oluştururken hata:", error);
-                alert("Cevap anahtarı oluşturulurken bir hata oluştu. PDF kaydedilemiyor.");
+                showModal('Hata', "Cevap anahtarı oluşturulurken bir hata oluştu.", 'danger');
                 resetPdfGenerationState();
             }
         };
@@ -1237,59 +996,34 @@ const generateOpticalFormContent = (
     }
   }, [isGeneratingPdf, currentlyRenderingPage, answerKeyData]);
 
-  // Effect to handle rendering of optical forms
   useEffect(() => {
     if (!isGeneratingPdf || !currentlyRenderingOpticalForm) return;
-
     const generateFormPage = async () => {
         if (!opticalFormRef.current) return;
-        
         const totalForms = answerKeyData?.length ?? 0;
         const currentFormIndex = totalForms - opticalFormQueueRef.current.length;
-        
         setPdfGenerationMessage(`Optik form oluşturuluyor: ${currentlyRenderingOpticalForm} (${currentFormIndex}/${totalForms})`);
-
         try {
             const pdf = pdfDocRef.current;
             const canvas = await html2canvas(opticalFormRef.current, { scale: 2 });
             const imgData = canvas.toDataURL('image/jpeg', 0.95);
-            
             pdf.addPage();
             const a4Width_mm = pdf.internal.pageSize.getWidth();
             const imgProps = pdf.getImageProperties(imgData);
             const pdfHeight = (imgProps.height * a4Width_mm) / imgProps.width;
             pdf.addImage(imgData, 'JPEG', 0, 0, a4Width_mm, pdfHeight);
-
             const nextFormBooklet = opticalFormQueueRef.current.shift();
-            if (nextFormBooklet) {
-                setCurrentlyRenderingOpticalForm(nextFormBooklet);
-            } else {
-                setPdfGenerationMessage('PDF kaydediliyor...');
-                pdf.save(`test_${testDetails.course.replace(/\s/g, '_')}_cevapli_optik.pdf`);
-                resetPdfGenerationState();
-            }
+            if (nextFormBooklet) setCurrentlyRenderingOpticalForm(nextFormBooklet);
+            else { setPdfGenerationMessage('PDF kaydediliyor...'); pdf.save(`test_${testDetails.course.replace(/\s/g, '_')}_cevapli_optik.pdf`); resetPdfGenerationState(); }
         } catch (error) {
             console.error("Optik form sayfası oluşturma hatası:", error);
-            alert("Optik form oluşturulurken bir hata oluştu. Lütfen konsolu kontrol edin.");
+            showModal('Hata', "Optik form oluşturulurken bir hata oluştu.", 'danger');
             resetPdfGenerationState();
         }
     };
-    
     const timer = setTimeout(generateFormPage, 100);
     return () => clearTimeout(timer);
   }, [isGeneratingPdf, currentlyRenderingOpticalForm, testDetails.course, answerKeyData]);
-
-  // Debug için
-  useEffect(() => {
-    if (isGeneratingPdf && currentlyRenderingPage) {
-      console.log('Render ediliyor:', {
-        booklet: currentlyRenderingPage.bookletType,
-        questionCount: currentlyRenderingPage.questions.length,
-        startIndex: currentlyRenderingPage.startIndex,
-        firstQuestionText: currentlyRenderingPage.questions[0]?.text?.substring(0, 50)
-      });
-    }
-  }, [currentlyRenderingPage, isGeneratingPdf]);
 
   return (
     <>
@@ -1338,7 +1072,6 @@ const generateOpticalFormContent = (
                                                 className="w-20 bg-slate-700 border border-slate-600 rounded-md p-2 text-sm"
                                             />
                                         </div>
-                                        <p className="text-sm text-slate-400 mt-1">Word çıktısında sorular arasındaki boşluğu ayarlar (twips-benzeri birim, varsayılan 100).</p>
                                     </div>
                                     <div className="md:col-span-3 lg:col-span-3">
                                         <label className="block text-sm font-medium text-slate-300">Yazı Tipi ve Boyutu</label>
@@ -1374,28 +1107,40 @@ const generateOpticalFormContent = (
                                                 <input type="number" value={headingFontSize} onChange={(e) => setHeadingFontSize(parseInt(e.target.value||'0'))} className="mt-1 block w-full bg-slate-700 border border-slate-600 rounded-md p-2 text-sm" />
                                             </div>
                                         </div>
-                                        <p className="text-sm text-slate-400 mt-1">Bu ayarlar Word çıktısında soru metinleri ve başlıklar için kullanılır.</p>
                                     </div>
-                                    {/* fontList removed — using FontSelector component instead */}
               </div>
               
                 
             <div className="text-center py-4">
                 <button 
                     onClick={handleGenerateWordColumns} 
-                    disabled={questions.length === 0}
+                    disabled={activeQuestions.length === 0}
                     className="w-full max-w-sm px-8 py-4 rounded-lg bg-indigo-600 hover:bg-indigo-500 font-bold text-xl transition disabled:bg-slate-600 disabled:cursor-not-allowed flex items-center justify-center gap-3 mx-auto"
                 >
-                    <DownloadIcon className="w-6 h-6" /> Word Oluştur
+                    <DownloadIcon className="w-6 h-6" /> Word Oluştur ({activeQuestions.length} Soru)
                 </button>
-                {questions.length === 0 && <p className="text-sm text-yellow-400 mt-2">Word dosyası oluşturmak için en az bir soru ekleyin.</p>}
             </div>
             </section>
 
             <section className="bg-slate-800 p-6 rounded-lg shadow-lg">
                 <div className="flex flex-wrap gap-4 justify-between items-center border-b border-slate-700 pb-3 mb-4">
-                    <h2 className="text-2xl font-bold text-cyan-400">Sorular ({questions.length})</h2>
+                    <div className="flex flex-col">
+                        <h2 className="text-2xl font-bold text-cyan-400">Soru Havuzu ({questions.length})</h2>
+                        <span className="text-sm text-slate-400">{activeQuestions.length} soru seçildi</span>
+                    </div>
                     <div className="flex items-center flex-wrap gap-3">
+                        <div className="flex items-center gap-2 bg-slate-700 p-1.5 rounded-md border border-slate-600">
+                             <input 
+                                type="number" 
+                                placeholder="Adet" 
+                                value={randomCount} 
+                                onChange={(e) => setRandomCount(e.target.value)}
+                                className="w-16 bg-slate-800 border border-slate-600 rounded px-2 py-1 text-xs focus:ring-1 focus:ring-cyan-500"
+                             />
+                             <button onClick={handleRandomSelect} className="text-xs px-2 py-1 rounded bg-cyan-600 hover:bg-cyan-500 transition text-white font-bold">Rasgele Seç</button>
+                        </div>
+                        <button onClick={selectAll} className="text-xs px-2 py-1 rounded bg-slate-700 hover:bg-slate-600 transition">Hepsini Seç</button>
+                        <button onClick={deselectAll} className="text-xs px-2 py-1 rounded bg-slate-700 hover:bg-slate-600 transition">Seçimleri Kaldır</button>
                         <button onClick={handleExport} title="Sınav Verilerini İndir (JSON)" className="flex items-center gap-2 px-3 py-2 rounded-md bg-slate-600 hover:bg-slate-500 font-semibold transition text-sm">
                             <DownloadIcon className="w-4 h-4"/> İndir (JSON)
                         </button>
@@ -1411,13 +1156,12 @@ const generateOpticalFormContent = (
                             <input type="file" accept=".txt" onChange={handleImportGift} className="hidden" />
                         </label>
 
-                <button
-                  onClick={deleteAllQuestions}
-                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-                >
-                  Tüm Soruları Sil
-                </button>
-
+                        <button
+                          onClick={deleteAllQuestions}
+                          className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                        >
+                          Tüm Soruları Sil
+                        </button>
 
                         <button onClick={openEditorForNew} className="flex items-center gap-2 px-4 py-2 rounded-md bg-cyan-600 hover:bg-cyan-500 font-semibold transition">
                             <PlusIcon className="w-5 h-5"/> Soru Ekle
@@ -1427,14 +1171,25 @@ const generateOpticalFormContent = (
                 <div className="space-y-3">
                     {questions.length === 0 && <p className="text-slate-400 text-center py-4">Henüz soru eklenmedi. Başlamak için 'Soru Ekle' düğmesine tıklayın.</p>}
                     {questions.map((q, index) => (
-                        <div key={q.id} className="bg-slate-700 p-4 rounded-md flex justify-between items-start">
-                           <div className="flex-1 overflow-hidden">
-                                <p className="font-semibold truncate">{index + 1}. {stripHtml(q.text)}</p>
-                                <p className="text-sm text-green-400 mt-1">Doğru Cevap: {String.fromCharCode(65 + q.correctAnswerIndex)}</p>
+                        <div 
+                            key={q.id} 
+                            className={`bg-slate-700 p-4 rounded-md flex justify-between items-start border-l-4 transition-colors ${selectedIds.has(q.id) ? 'border-cyan-500' : 'border-transparent'}`}
+                        >
+                           <div className="flex items-start gap-4 flex-1 overflow-hidden">
+                               <input 
+                                   type="checkbox" 
+                                   checked={selectedIds.has(q.id)} 
+                                   onChange={() => toggleSelection(q.id)}
+                                   className="mt-1.5 h-5 w-5 rounded border-slate-600 bg-slate-800 text-cyan-600 focus:ring-cyan-500 transition cursor-pointer"
+                               />
+                               <div className="flex-1 overflow-hidden cursor-pointer" onClick={() => toggleSelection(q.id)}>
+                                    <p className="font-semibold truncate">{index + 1}. {stripHtml(q.text)}</p>
+                                    <p className="text-sm text-green-400 mt-1">Doğru Cevap: {q.correctAnswerIndex >= 0 ? String.fromCharCode(65 + q.correctAnswerIndex) : '-'}</p>
+                               </div>
                            </div>
                            <div className="flex items-center space-x-2 ml-4">
-                               <button onClick={() => openEditorForEdit(q)} className="p-2 text-slate-300 hover:text-cyan-400 transition"><EditIcon /></button>
-                               <button onClick={() => deleteQuestion(q.id)} className="p-2 text-slate-300 hover:text-red-500 transition"><TrashIcon /></button>
+                               <button onClick={(e) => { e.stopPropagation(); openEditorForEdit(q); }} className="p-2 text-slate-300 hover:text-cyan-400 transition"><EditIcon /></button>
+                               <button onClick={(e) => { e.stopPropagation(); deleteQuestion(q.id); }} className="p-2 text-slate-300 hover:text-red-500 transition"><TrashIcon /></button>
                            </div>
                         </div>
                     ))}
@@ -1443,13 +1198,12 @@ const generateOpticalFormContent = (
             
             <section className="text-center py-4">
                 <button 
-                    onClick={handleGenerateWordColumns} 
-                    disabled={questions.length === 0}
-                    className="w-full max-w-sm px-8 py-4 rounded-lg bg-indigo-600 hover:bg-indigo-500 font-bold text-xl transition disabled:bg-slate-600 disabled:cursor-not-allowed flex items-center justify-center gap-3 mx-auto"
+                    onClick={handleGeneratePdf} 
+                    disabled={activeQuestions.length === 0}
+                    className="w-full max-sm px-8 py-4 rounded-lg bg-emerald-600 hover:bg-emerald-500 font-bold text-xl transition disabled:bg-slate-600 disabled:cursor-not-allowed flex items-center justify-center gap-3 mx-auto"
                 >
-                    <DownloadIcon className="w-6 h-6" /> Word Oluştur
+                    {isGeneratingPdf ? <SpinnerIcon /> : <DownloadIcon className="w-6 h-6" />} {isGeneratingPdf ? 'PDF Hazırlanıyor...' : `PDF Oluştur (${activeQuestions.length} Soru)`}
                 </button>
-                {questions.length === 0 && <p className="text-sm text-yellow-400 mt-2">Word dosyası oluşturmak için en az bir soru ekleyin.</p>}
             </section>
           </main>
         </div>
@@ -1482,10 +1236,30 @@ const generateOpticalFormContent = (
           <OpticalForm
               innerRef={opticalFormRef}
               booklet={currentlyRenderingOpticalForm}
-              questionCount={questions.length}
+              questionCount={activeQuestions.length}
           />
         )}
       </div>
+
+      {/* Modern Modal System */}
+      <Modal 
+        isOpen={modalConfig.isOpen}
+        title={modalConfig.title}
+        message={modalConfig.message}
+        type={modalConfig.type}
+        onConfirm={modalConfig.onConfirm}
+        onClose={() => setModalConfig({ ...modalConfig, isOpen: false })}
+      />
+
+      {isGeneratingPdf && (
+        <div className="fixed bottom-4 right-4 bg-slate-800 border border-cyan-500 p-4 rounded-lg shadow-2xl z-50 flex items-center gap-4 min-w-[300px]">
+          <SpinnerIcon className="text-cyan-400" />
+          <div>
+            <div className="text-sm font-bold text-white">İşlem Yapılıyor</div>
+            <div className="text-xs text-slate-400">{pdfGenerationMessage}</div>
+          </div>
+        </div>
+      )}
     </>
   );
 };
