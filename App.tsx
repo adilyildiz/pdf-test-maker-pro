@@ -4,22 +4,26 @@ import ReactDOM from 'react-dom/client';
 import { TestDetails, Question, Answer } from './types';
 import { QuestionEditor } from './components/QuestionEditor';
 import { TestPreview } from './components/TestPreview';
-import { AnswerKeyPreview } from './components/AnswerKeyPreview';
-import { OpticalForm } from './components/OpticalForm';
 import { FontSelector } from './components/FontSelector';
 import { Modal } from './components/Modal';
 import { PlusIcon, TrashIcon, EditIcon, SpinnerIcon, DownloadIcon, UploadIcon } from './components/icons';
 import { Document, Paragraph, TextRun, HeadingLevel, AlignmentType, Table, TableRow, TableCell, WidthType, BorderStyle, Packer } from 'docx';
 import  saveAs  from 'file-saver';
 
-// Declare globals from included scripts to satisfy TypeScript
-declare var jspdf: any;
-declare var html2canvas: any;
-
 // Helper to strip HTML for plain text previews
 const stripHtml = (html: string): string => {
-    const doc = new DOMParser().parseFromString(html, 'text/html');
-    return doc.body.textContent || "";
+    if (!html) return '';
+    // HTML entity'leri decode et
+    const textarea = document.createElement('textarea');
+    textarea.innerHTML = html;
+    const decodedHtml = textarea.value;
+    
+    // HTML etiketlerini temizle
+    const doc = new DOMParser().parseFromString(decodedHtml, 'text/html');
+    const text = doc.body.textContent || "";
+    
+    // Fazla boşlukları temizle
+    return text.replace(/\s+/g, ' ').trim();
 };
 
 // Helper to convert HTML to text with preserved line breaks
@@ -98,7 +102,6 @@ const App: React.FC = () => {
   const [numberOfBooklets, setNumberOfBooklets] = useState(2);
   const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [editingQuestion, setEditingQuestion] = useState<Question | null>(null);
-  const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
   const [questionSpacing, setQuestionSpacing] = useState<number>(100); 
   const [removeQuestionSpacing, setRemoveQuestionSpacing] = useState<boolean>(false);
   const [questionFontFamily, setQuestionFontFamily] = useState<string>('Times New Roman');
@@ -120,19 +123,6 @@ const App: React.FC = () => {
     message: '',
     type: 'info'
   });
-
-  const [currentlyRenderingPage, setCurrentlyRenderingPage] = useState<{ bookletType: string; questions: Question[]; startIndex: number } | null>(null);
-  const [currentlyRenderingOpticalForm, setCurrentlyRenderingOpticalForm] = useState<string | null>(null);
-  const [answerKeyData, setAnswerKeyData] = useState<Array<{ bookletType: string; questions: Question[] }> | null>(null);
-  const [pdfGenerationMessage, setPdfGenerationMessage] = useState('');
-
-  const previewRef = useRef<HTMLDivElement>(null);
-  const answerKeyRef = useRef<HTMLDivElement>(null);
-  const opticalFormRef = useRef<HTMLDivElement>(null);
-  const pdfDocRef = useRef<any>(null);
-  const pageQueueRef = useRef<Array<{ bookletType: string; questions: Question[]; startIndex: number }>>([]);
-  const opticalFormQueueRef = useRef<string[]>([]);
-  const isGeneratingRef = useRef<boolean>(false);
 
   // Filter selected questions for generation
   const activeQuestions = useMemo(() => 
@@ -257,7 +247,6 @@ const App: React.FC = () => {
         () => {
             setQuestions([]);
             setSelectedIds(new Set());
-            resetPdfGenerationState();
         }
     );
   };
@@ -322,17 +311,7 @@ const App: React.FC = () => {
       });
   };
   
-  const resetPdfGenerationState = () => {
-    isGeneratingRef.current = false;
-    setIsGeneratingPdf(false);
-    setCurrentlyRenderingPage(null);
-    setCurrentlyRenderingOpticalForm(null);
-    setAnswerKeyData(null);
-    setPdfGenerationMessage('');
-    pdfDocRef.current = null;
-    pageQueueRef.current = [];
-    opticalFormQueueRef.current = [];
-  };
+  // PDF fonksiyonları kaldırıldı - sadece Word export kullanılıyor
 
   const paginate = useCallback((allQuestions: Question[], bookletDetails: TestDetails): Promise<Question[][]> => {
     return new Promise((resolve, reject) => {
@@ -421,427 +400,6 @@ const App: React.FC = () => {
     return pages;
   };
 
-  // Yeni PDF Export Fonksiyonu - HTML tabanlı, Türkçe karakter destekli
-  const handleGeneratePdfDirect = async () => {
-    if (activeQuestions.length === 0) {
-      showModal('Uyarı', "PDF oluşturmadan önce lütfen en az bir soru seçin.", 'warning');
-      return;
-    }
-
-    try {
-      setIsGeneratingPdf(true);
-      setPdfGenerationMessage('Kitapçıklar hazırlanıyor...');
-      
-      const { jsPDF } = jspdf;
-      directPdfDocRef.current = new jsPDF('p', 'mm', 'a4');
-      
-      // Kitapçıkları oluştur
-      const booklets: Array<{ bookletType: string; questions: Question[] }> = [];
-      for (let i = 0; i < numberOfBooklets; i++) {
-        const bookletType = String.fromCharCode(65 + i);
-        booklets.push({
-          bookletType,
-          questions: shuffleQuestionsAndAnswers(JSON.parse(JSON.stringify(activeQuestions)))
-        });
-      }
-      
-      // Tüm sayfaları hazırla
-      const allPages: Array<{
-        type: 'booklet' | 'answer-key' | 'optical-form';
-        bookletType: string;
-        questions: Question[];
-        startIndex: number;
-        isFirstPage: boolean;
-        allBooklets?: Array<{ bookletType: string; questions: Question[] }>;
-      }> = [];
-      
-      // Her kitapçık için sayfaları oluştur
-      for (const booklet of booklets) {
-        const questionPages = paginateQuestionsForPdf(booklet.questions, 12);
-        let questionIndex = 0;
-        
-        questionPages.forEach((pageQuestions, pageIndex) => {
-          allPages.push({
-            type: 'booklet',
-            bookletType: booklet.bookletType,
-            questions: pageQuestions,
-            startIndex: questionIndex,
-            isFirstPage: pageIndex === 0
-          });
-          questionIndex += pageQuestions.length;
-        });
-      }
-      
-      // Cevap anahtarı sayfası
-      allPages.push({
-        type: 'answer-key',
-        bookletType: '',
-        questions: [],
-        startIndex: 0,
-        isFirstPage: true,
-        allBooklets: booklets
-      });
-      
-      // Optik formlar
-      for (const booklet of booklets) {
-        allPages.push({
-          type: 'optical-form',
-          bookletType: booklet.bookletType,
-          questions: booklet.questions,
-          startIndex: 0,
-          isFirstPage: true
-        });
-      }
-      
-      setDirectPdfPages(allPages);
-      setDirectPdfCurrentPage(0);
-      
-    } catch (error) {
-      console.error("PDF oluşturma hatası:", error);
-      showModal('Hata', "PDF oluşturulurken bir hata oluştu: " + (error as Error).message, 'danger');
-      setIsGeneratingPdf(false);
-      setPdfGenerationMessage('');
-    }
-  };
-
-  // Effect for direct PDF generation
-  useEffect(() => {
-    if (!directPdfPages || directPdfCurrentPage < 0) return;
-    
-    const totalPages = directPdfPages.length;
-    
-    const generateCurrentPage = async () => {
-      await new Promise(resolve => setTimeout(resolve, 300));
-      
-      if (!directPdfRef.current) {
-        setTimeout(() => setDirectPdfCurrentPage(prev => prev), 100);
-        return;
-      }
-      
-      try {
-        const canvas = await html2canvas(directPdfRef.current, { 
-          scale: 2, 
-          logging: false, 
-          useCORS: true, 
-          allowTaint: true,
-          backgroundColor: '#ffffff'
-        });
-        
-        if (canvas.width === 0 || canvas.height === 0) {
-          throw new Error('Canvas boş');
-        }
-        
-        const imgData = canvas.toDataURL('image/jpeg', 0.95);
-        const pdf = directPdfDocRef.current;
-        
-        if (directPdfCurrentPage > 0) {
-          pdf.addPage();
-        }
-        
-        const a4Width_mm = pdf.internal.pageSize.getWidth();
-        const a4Height_mm = pdf.internal.pageSize.getHeight();
-        const imgProps = pdf.getImageProperties(imgData);
-        const pdfHeight = (imgProps.height * a4Width_mm) / imgProps.width;
-        
-        // Eğer içerik sayfadan uzunsa, sayfaya sığdır
-        if (pdfHeight > a4Height_mm) {
-          pdf.addImage(imgData, 'JPEG', 0, 0, a4Width_mm, a4Height_mm);
-        } else {
-          pdf.addImage(imgData, 'JPEG', 0, 0, a4Width_mm, pdfHeight);
-        }
-        
-        setPdfGenerationMessage(`Sayfa ${directPdfCurrentPage + 1}/${totalPages} oluşturuldu...`);
-        
-        if (directPdfCurrentPage < totalPages - 1) {
-          setDirectPdfCurrentPage(prev => prev + 1);
-        } else {
-          // Tamamlandı
-          pdf.save(`test_${testDetails.course.replace(/\s/g, '_')}.pdf`);
-          setDirectPdfPages(null);
-          setDirectPdfCurrentPage(-1);
-          setIsGeneratingPdf(false);
-          setPdfGenerationMessage('');
-          showModal('Başarılı', 'PDF dosyası başarıyla oluşturuldu.', 'info');
-        }
-      } catch (error) {
-        console.error("PDF sayfa oluşturma hatası:", error);
-        showModal('Hata', "PDF oluşturulurken bir hata oluştu.", 'danger');
-        setDirectPdfPages(null);
-        setDirectPdfCurrentPage(-1);
-        setIsGeneratingPdf(false);
-        setPdfGenerationMessage('');
-      }
-    };
-    
-    const timer = setTimeout(generateCurrentPage, 200);
-    return () => clearTimeout(timer);
-  }, [directPdfPages, directPdfCurrentPage, testDetails.course]);
-
-  // Render current page content for direct PDF
-  const renderDirectPdfPage = () => {
-    if (!directPdfPages || directPdfCurrentPage < 0 || directPdfCurrentPage >= directPdfPages.length) return null;
-    
-    const currentPage = directPdfPages[directPdfCurrentPage];
-    
-    // Booklet pages
-    if (currentPage.type === 'booklet') {
-      return (
-        <div ref={directPdfRef} style={{ 
-          width: '210mm', 
-          height: '297mm', 
-          padding: '12mm 15mm',
-          backgroundColor: 'white',
-          color: 'black',
-          fontFamily: 'Times New Roman, serif',
-          fontSize: '10pt',
-          lineHeight: '1.3',
-          boxSizing: 'border-box',
-          overflow: 'hidden'
-        }}>
-          {/* Başlık - sadece ilk sayfada */}
-          {currentPage.isFirstPage && (
-            <>
-              <div style={{ textAlign: 'center', marginBottom: '3mm' }}>
-                <p style={{ fontWeight: 'bold', margin: '1px 0', fontSize: '9pt' }}>{testDetails.schoolYear} EĞİTİM - ÖĞRETİM YILI {testDetails.faculty.toUpperCase()} {testDetails.department.toUpperCase()}</p>
-                <p style={{ fontWeight: 'bold', margin: '1px 0', fontSize: '9pt' }}>{testDetails.course.toUpperCase()} DERSİ {testDetails.examType.toUpperCase()} SORULARI</p>
-              </div>
-              
-              {/* AD-SOYAD, NUMARA, Kitapçık */}
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '5mm' }}>
-                <div>
-                  <p style={{ margin: '1px 0', fontSize: '9pt' }}><strong>AD-SOYAD:</strong> ____________________________</p>
-                  <p style={{ margin: '1px 0', fontSize: '9pt' }}><strong>NUMARA:</strong> ____________________________</p>
-                </div>
-                <div style={{ textAlign: 'center' }}>
-                  <div style={{ fontSize: '36pt', fontWeight: 'bold', lineHeight: '1' }}>{currentPage.bookletType}</div>
-                  <div style={{ fontWeight: 'bold', letterSpacing: '1px', fontSize: '8pt' }}>KİTAPÇIĞI</div>
-                </div>
-              </div>
-            </>
-          )}
-          
-          {/* Devam sayfası başlığı */}
-          {!currentPage.isFirstPage && (
-            <div style={{ textAlign: 'right', marginBottom: '3mm', fontSize: '9pt' }}>
-              <strong>{currentPage.bookletType} Kitapçığı - Sayfa {Math.floor(currentPage.startIndex / 12) + 1}</strong>
-            </div>
-          )}
-          
-          {/* Sorular - İki Sütun */}
-          <div style={{ columnCount: 2, columnGap: '6mm', fontSize: '9pt' }}>
-            {currentPage.questions.map((q, index) => (
-              <div key={q.id} style={{ breakInside: 'avoid', pageBreakInside: 'avoid', marginBottom: '1mm' }}>
-                <div style={{ display: 'flex', alignItems: 'flex-start' }}>
-                  <span style={{ fontWeight: 'bold', marginRight: '1.5mm', minWidth: '5mm' }}>{currentPage.startIndex + index + 1}.</span>
-                  <div style={{ flex: 1 }}>
-                    <div dangerouslySetInnerHTML={{ __html: q.text }} />
-                    <div style={{ marginTop: '0.5mm' }}>
-                      {q.answers.filter(a => a.text.trim() !== '').map((ans, ansIndex) => (
-                        <div key={ansIndex} style={{ display: 'flex', alignItems: 'flex-start', marginLeft: '1mm', lineHeight: '1.2' }}>
-                          <span style={{ marginRight: '1mm' }}>{String.fromCharCode(97 + ansIndex)})</span>
-                          <span>{ans.text}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      );
-    }
-    
-    // Answer Key page
-    if (currentPage.type === 'answer-key' && currentPage.allBooklets) {
-      return (
-        <div ref={directPdfRef} style={{ 
-          width: '210mm', 
-          minHeight: '297mm', 
-          padding: '15mm',
-          backgroundColor: 'white',
-          color: 'black',
-          fontFamily: 'Times New Roman, serif',
-          fontSize: '10pt'
-        }}>
-          <h2 style={{ textAlign: 'center', marginBottom: '10mm', fontSize: '14pt' }}>
-            {testDetails.course.toUpperCase()} DERSİ CEVAP ANAHTARI
-          </h2>
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-            <thead>
-              <tr>
-                <th style={{ border: '1px solid #ccc', padding: '4px', textAlign: 'center' }}>#</th>
-                {currentPage.allBooklets.map(b => (
-                  <th key={b.bookletType} style={{ border: '1px solid #ccc', padding: '4px', textAlign: 'center' }}>
-                    {b.bookletType} Grubu
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {Array.from({ length: Math.max(...currentPage.allBooklets.map(b => b.questions.length)) }).map((_, qi) => (
-                <tr key={qi}>
-                  <td style={{ border: '1px solid #ccc', padding: '4px', textAlign: 'center' }}>{qi + 1}</td>
-                  {currentPage.allBooklets!.map(b => {
-                    const q = b.questions[qi];
-                    let letter = '-';
-                    if (q && typeof q.correctAnswerIndex === 'number' && q.correctAnswerIndex >= 0) {
-                      letter = String.fromCharCode(65 + q.correctAnswerIndex);
-                    }
-                    return (
-                      <td key={b.bookletType} style={{ border: '1px solid #ccc', padding: '4px', textAlign: 'center' }}>
-                        {letter}
-                      </td>
-                    );
-                  })}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      );
-    }
-    
-    // Optical Form pages
-    if (currentPage.type === 'optical-form') {
-      const questionCount = currentPage.questions.length;
-      const questionsPerColumn = Math.ceil(questionCount / 2);
-      
-      return (
-        <div ref={directPdfRef} style={{ 
-          width: '210mm', 
-          minHeight: '297mm', 
-          padding: '15mm',
-          backgroundColor: 'white',
-          color: 'black',
-          fontFamily: 'Times New Roman, serif',
-          fontSize: '10pt'
-        }}>
-          <h2 style={{ textAlign: 'center', marginBottom: '5mm', fontSize: '14pt' }}>
-            {currentPage.bookletType} KİTAPÇIĞI OPTİK FORMU
-          </h2>
-          <p style={{ margin: '2px 0' }}><strong>AD-SOYAD:</strong> ____________________________</p>
-          <p style={{ margin: '2px 0 10mm 0' }}><strong>NUMARA:</strong> ____________________________</p>
-          
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            {/* Sol Sütun */}
-            <div style={{ width: '48%' }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                <thead>
-                  <tr>
-                    <th style={{ border: '1px solid #000', padding: '3px', width: '30px' }}></th>
-                    {['A', 'B', 'C', 'D', 'E'].map(l => (
-                      <th key={l} style={{ border: '1px solid #000', padding: '3px', width: '25px', textAlign: 'center', fontWeight: 'bold' }}>{l}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {Array.from({ length: questionsPerColumn }).map((_, i) => {
-                    const qNum = i + 1;
-                    if (qNum > questionCount) return null;
-                    return (
-                      <tr key={qNum}>
-                        <td style={{ border: '1px solid #000', padding: '3px', textAlign: 'center', fontWeight: 'bold' }}>{qNum}</td>
-                        {['A', 'B', 'C', 'D', 'E'].map(l => (
-                          <td key={l} style={{ border: '1px solid #000', padding: '6px', textAlign: 'center' }}>○</td>
-                        ))}
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-            
-            {/* Sağ Sütun */}
-            <div style={{ width: '48%' }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                <thead>
-                  <tr>
-                    <th style={{ border: '1px solid #000', padding: '3px', width: '30px' }}></th>
-                    {['A', 'B', 'C', 'D', 'E'].map(l => (
-                      <th key={l} style={{ border: '1px solid #000', padding: '3px', width: '25px', textAlign: 'center', fontWeight: 'bold' }}>{l}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {Array.from({ length: questionsPerColumn }).map((_, i) => {
-                    const qNum = questionsPerColumn + i + 1;
-                    if (qNum > questionCount) return null;
-                    return (
-                      <tr key={qNum}>
-                        <td style={{ border: '1px solid #000', padding: '3px', textAlign: 'center', fontWeight: 'bold' }}>{qNum}</td>
-                        {['A', 'B', 'C', 'D', 'E'].map(l => (
-                          <td key={l} style={{ border: '1px solid #000', padding: '6px', textAlign: 'center' }}>○</td>
-                        ))}
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      );
-    }
-    
-    return null;
-  };
-
-  const handleGeneratePdf = async () => {
-    if (isGeneratingRef.current) return;
-    if (activeQuestions.length === 0) {
-        showModal('Uyarı', "PDF oluşturmadan önce lütfen en az bir soru seçin.", 'warning');
-        return;
-    }
-
-    try {
-        isGeneratingRef.current = true;
-        setIsGeneratingPdf(true);
-        setPdfGenerationMessage('Kitapçıklar hazırlanıyor...');
-        
-        const { jsPDF } = jspdf;
-        pdfDocRef.current = new jsPDF('p', 'mm', 'a4');
-        
-        const booklets = [];
-        for (let i = 0; i < numberOfBooklets; i++) {
-            const bookletType = String.fromCharCode(65 + i);
-            booklets.push({
-                bookletType,
-                questions: shuffleQuestionsAndAnswers(JSON.parse(JSON.stringify(activeQuestions)))
-            });
-        }
-
-        setAnswerKeyData([...booklets]);
-        pageQueueRef.current = [];
-
-        for (const [index, booklet] of booklets.entries()) {
-            setPdfGenerationMessage(`Kitapçık ${booklet.bookletType} sayfalara ayrılıyor... (${index + 1}/${booklets.length})`);
-            const bookletDetails = { ...testDetails, booklet: booklet.bookletType };
-            const paginated = await paginate(booklet.questions, bookletDetails);
-            
-            let questionIndex = 0;
-            for (const pageQuestions of paginated) {
-                pageQueueRef.current.push({
-                    bookletType: booklet.bookletType,
-                    questions: pageQuestions,
-                    startIndex: questionIndex,
-                });
-                questionIndex += pageQuestions.length;
-            }
-        }
-        
-        const firstPage = pageQueueRef.current.shift();
-        if (firstPage) {
-            setCurrentlyRenderingPage(firstPage);
-        } else {
-            setCurrentlyRenderingPage(null); 
-        }
-    } catch (error) {
-        console.error("PDF oluşturma başlatma hatası:", error);
-        showModal('Hata', "PDF oluşturma başlatılırken bir hata oluştu.", 'danger');
-        resetPdfGenerationState();
-    }
-  };
 
   const handleExport = () => {
     const dataToExport = {
@@ -1316,102 +874,6 @@ const generateOpticalFormContent = (
     }
 };
   
-  // Effect to handle rendering of test pages
-  useEffect(() => {
-    if (!isGeneratingPdf) return;
-    if (currentlyRenderingPage) {
-        const generatePage = async () => {
-          if (!previewRef.current) {
-              setTimeout(() => { if (currentlyRenderingPage) setCurrentlyRenderingPage({...currentlyRenderingPage}); }, 100);
-              return;
-          }
-          const currentPageNum = pdfDocRef.current.internal.getNumberOfPages();
-          setPdfGenerationMessage(`Sayfa ${currentPageNum} render ediliyor (${currentlyRenderingPage.questions.length} soru)...`);
-          try {
-            await new Promise(resolve => setTimeout(resolve, 200));
-            const canvas = await html2canvas(previewRef.current, { scale: 2, logging: false, useCORS: true, allowTaint: true });
-            if (canvas.width === 0 || canvas.height === 0) {
-                showModal('Hata', 'Sayfa render hatası: Canvas boş.', 'danger');
-                resetPdfGenerationState();
-                return;
-            }
-            const imgData = canvas.toDataURL('image/jpeg', 0.95);
-            const pdf = pdfDocRef.current;
-            const isFirstPage = pdf.internal.getNumberOfPages() === 1;
-            if (!isFirstPage) pdf.addPage();
-            const a4Width_mm = pdf.internal.pageSize.getWidth();
-            const imgProps = pdf.getImageProperties(imgData);
-            const pdfHeight = (imgProps.height * a4Width_mm) / imgProps.width;
-            pdf.addImage(imgData, 'JPEG', 0, 0, a4Width_mm, pdfHeight);
-            const nextPage = pageQueueRef.current.shift();
-            if (nextPage) setCurrentlyRenderingPage(nextPage);
-            else setCurrentlyRenderingPage(null);
-          } catch (error) {
-            console.error("PDF sayfası oluşturma hatası:", error);
-            showModal('Hata', "PDF oluşturulurken bir hata oluştu.", 'danger');
-            resetPdfGenerationState();
-          }
-        };
-        const timer = setTimeout(generatePage, 200);
-        return () => clearTimeout(timer);
-    } else if (answerKeyData && !currentlyRenderingPage && pageQueueRef.current.length === 0) {
-        const generatePostPages = async () => {
-            try {
-                if (answerKeyRef.current) {
-                    setPdfGenerationMessage('Cevap anahtarı oluşturuluyor...');
-                    const answerCanvas = await html2canvas(answerKeyRef.current, { scale: 2 });
-                    const answerImgData = answerCanvas.toDataURL('image/jpeg', 0.95);
-                    const pdf = pdfDocRef.current;
-                    pdf.addPage();
-                    const a4Width_mm = pdf.internal.pageSize.getWidth();
-                    const answerImgProps = pdf.getImageProperties(answerImgData);
-                    const answerPdfHeight = (answerImgProps.height * a4Width_mm) / answerImgProps.width;
-                    pdf.addImage(answerImgData, 'JPEG', 0, 0, a4Width_mm, answerPdfHeight);
-                }
-                const opticalFormBooklets = answerKeyData?.map(b => b.bookletType) ?? [];
-                opticalFormQueueRef.current = opticalFormBooklets;
-                const nextFormBooklet = opticalFormQueueRef.current.shift();
-                if (nextFormBooklet) setCurrentlyRenderingOpticalForm(nextFormBooklet);
-                else { pdfDocRef.current.save(`test_${testDetails.course.replace(/\s/g, '_')}_cevapli.pdf`); resetPdfGenerationState(); }
-            } catch (error) {
-                console.error("Cevap anahtarı oluştururken hata:", error);
-                showModal('Hata', "Cevap anahtarı oluşturulurken bir hata oluştu.", 'danger');
-                resetPdfGenerationState();
-            }
-        };
-        const timer = setTimeout(generatePostPages, 100);
-        return () => clearTimeout(timer);
-    }
-  }, [isGeneratingPdf, currentlyRenderingPage, answerKeyData]);
-
-  useEffect(() => {
-    if (!isGeneratingPdf || !currentlyRenderingOpticalForm) return;
-    const generateFormPage = async () => {
-        if (!opticalFormRef.current) return;
-        const totalForms = answerKeyData?.length ?? 0;
-        const currentFormIndex = totalForms - opticalFormQueueRef.current.length;
-        setPdfGenerationMessage(`Optik form oluşturuluyor: ${currentlyRenderingOpticalForm} (${currentFormIndex}/${totalForms})`);
-        try {
-            const pdf = pdfDocRef.current;
-            const canvas = await html2canvas(opticalFormRef.current, { scale: 2 });
-            const imgData = canvas.toDataURL('image/jpeg', 0.95);
-            pdf.addPage();
-            const a4Width_mm = pdf.internal.pageSize.getWidth();
-            const imgProps = pdf.getImageProperties(imgData);
-            const pdfHeight = (imgProps.height * a4Width_mm) / imgProps.width;
-            pdf.addImage(imgData, 'JPEG', 0, 0, a4Width_mm, pdfHeight);
-            const nextFormBooklet = opticalFormQueueRef.current.shift();
-            if (nextFormBooklet) setCurrentlyRenderingOpticalForm(nextFormBooklet);
-            else { setPdfGenerationMessage('PDF kaydediliyor...'); pdf.save(`test_${testDetails.course.replace(/\s/g, '_')}_cevapli_optik.pdf`); resetPdfGenerationState(); }
-        } catch (error) {
-            console.error("Optik form sayfası oluşturma hatası:", error);
-            showModal('Hata', "Optik form oluşturulurken bir hata oluştu.", 'danger');
-            resetPdfGenerationState();
-        }
-    };
-    const timer = setTimeout(generateFormPage, 100);
-    return () => clearTimeout(timer);
-  }, [isGeneratingPdf, currentlyRenderingOpticalForm, testDetails.course, answerKeyData]);
 
   return (
     <>
@@ -1586,12 +1048,13 @@ const generateOpticalFormContent = (
             
             <section className="text-center py-4 space-y-3">
                 <div className="flex flex-wrap gap-4 justify-center">
+
                     <button 
-                        onClick={handleGeneratePdfDirect} 
-                        disabled={activeQuestions.length === 0 || isGeneratingPdf}
-                        className="px-8 py-4 rounded-lg bg-emerald-600 hover:bg-emerald-500 font-bold text-xl transition disabled:bg-slate-600 disabled:cursor-not-allowed flex items-center justify-center gap-3"
+                        onClick={handleGenerateWordColumns} 
+                        disabled={activeQuestions.length === 0}
+                        className="w-full max-w-md px-8 py-4 rounded-lg bg-indigo-600 hover:bg-indigo-500 font-bold text-xl transition disabled:bg-slate-600 disabled:cursor-not-allowed flex items-center justify-center gap-3"
                     >
-                        {isGeneratingPdf ? <SpinnerIcon /> : <DownloadIcon className="w-6 h-6" />} {isGeneratingPdf ? 'PDF Hazırlanıyor...' : `PDF Oluştur (${activeQuestions.length} Soru)`}
+                        <DownloadIcon className="w-6 h-6" /> Word Oluştur ({activeQuestions.length} Soru)
                     </button>
                 </div>
             </section>
@@ -1606,32 +1069,6 @@ const generateOpticalFormContent = (
         questionToEdit={editingQuestion}
       />
       
-      <div className="absolute -left-[9999px] top-0">
-        {isGeneratingPdf && currentlyRenderingPage && (
-            <TestPreview 
-              innerRef={previewRef} 
-              details={{...testDetails, booklet: currentlyRenderingPage.bookletType}} 
-              questions={currentlyRenderingPage.questions} 
-              startIndex={currentlyRenderingPage.startIndex} 
-            />
-        )}
-        {isGeneratingPdf && !currentlyRenderingPage && answerKeyData && pageQueueRef.current.length === 0 && (
-          <AnswerKeyPreview
-            innerRef={answerKeyRef}
-            booklets={answerKeyData}
-            courseName={testDetails.course}
-          />
-        )}
-        {isGeneratingPdf && currentlyRenderingOpticalForm && (
-          <OpticalForm
-              innerRef={opticalFormRef}
-              booklet={currentlyRenderingOpticalForm}
-              questionCount={activeQuestions.length}
-          />
-        )}
-        {/* Direct PDF render area */}
-        {directPdfPages && directPdfCurrentPage >= 0 && renderDirectPdfPage()}
-      </div>
 
       {/* Modern Modal System */}
       <Modal 
@@ -1642,16 +1079,6 @@ const generateOpticalFormContent = (
         onConfirm={modalConfig.onConfirm}
         onClose={() => setModalConfig({ ...modalConfig, isOpen: false })}
       />
-
-      {isGeneratingPdf && (
-        <div className="fixed bottom-4 right-4 bg-slate-800 border border-cyan-500 p-4 rounded-lg shadow-2xl z-50 flex items-center gap-4 min-w-[300px]">
-          <SpinnerIcon className="text-cyan-400" />
-          <div>
-            <div className="text-sm font-bold text-white">İşlem Yapılıyor</div>
-            <div className="text-xs text-slate-400">{pdfGenerationMessage}</div>
-          </div>
-        </div>
-      )}
     </>
   );
 };
