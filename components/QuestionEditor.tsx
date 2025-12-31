@@ -1,66 +1,78 @@
 
 import React, { useState, useEffect, useRef } from 'react';
+import { Editor } from '@tinymce/tinymce-react';
 import { Question } from '../types';
 import { TrashIcon } from './icons';
 
-// Simple Rich Text Editor component for basic formatting
+// TinyMCE Rich Text Editor component with advanced formatting
 const RichTextEditor: React.FC<{ value: string; onChange: (value: string) => void; }> = ({ value, onChange }) => {
-  const editorRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (editorRef.current && editorRef.current.innerHTML !== value) {
-      editorRef.current.innerHTML = value;
-    }
-  }, [value]);
-
-  const handleInput = (e: React.FormEvent<HTMLDivElement>) => {
-    onChange(e.currentTarget.innerHTML);
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      document.execCommand('insertHTML', false, '<br />');
-      if (editorRef.current) {
-        onChange(editorRef.current.innerHTML);
-      }
-    }
-  };
-
-  const execCmd = (command: string) => {
-    editorRef.current?.focus();
-    document.execCommand(command, false, undefined);
-    if(editorRef.current) {
-        onChange(editorRef.current.innerHTML);
-    }
-  };
-
-  const ToolbarButton: React.FC<{ onClick: () => void; title: string; children: React.ReactNode}> = ({onClick, title, children}) => (
-      <button 
-        type="button" 
-        onClick={onClick}
-        onMouseDown={e => e.preventDefault()}
-        className="px-2 py-1 w-8 h-8 flex items-center justify-center rounded-md hover:bg-slate-600 transition-colors font-mono text-lg"
-        title={title}
-      >
-        {children}
-      </button>
-  );
-
   return (
-    <div className="bg-slate-700 border border-slate-600 rounded-md focus-within:ring-2 focus-within:ring-cyan-500 focus-within:border-cyan-500 transition">
-      <div className="flex items-center space-x-1 border-b border-slate-600 p-1">
-        <ToolbarButton onClick={() => execCmd('bold')} title="Kalın (Ctrl+B)"><b>B</b></ToolbarButton>
-        <ToolbarButton onClick={() => execCmd('italic')} title="İtalik (Ctrl+I)"><i>I</i></ToolbarButton>
-        <ToolbarButton onClick={() => execCmd('underline')} title="Altı Çizili (Ctrl+U)"><u>U</u></ToolbarButton>
-      </div>
-      <div
-        ref={editorRef}
-        onInput={handleInput}
-        onKeyDown={handleKeyDown}
-        contentEditable={true}
-        className="w-full bg-slate-700 rounded-b-md p-2 outline-none"
-        style={{ minHeight: '120px' }}
+    <div className="tinymce-dark-wrapper rounded-md overflow-hidden border border-slate-600 focus-within:ring-2 focus-within:ring-cyan-500 focus-within:border-cyan-500 transition">
+      <Editor
+        tinymceScriptSrc="/tinymce/tinymce.min.js"
+        value={value}
+        onEditorChange={(content) => onChange(content)}
+        init={{
+          license_key: 'gpl',
+          height: 250,
+          menubar: false,
+          plugins: [
+            'advlist', 'autolink', 'lists', 'link', 'image', 'charmap',
+            'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
+            'insertdatetime', 'media', 'table', 'help', 'wordcount'
+          ],
+          toolbar: 'undo redo | blocks | ' +
+            'bold italic underline strikethrough | alignleft aligncenter ' +
+            'alignright alignjustify | bullist numlist outdent indent | ' +
+            'table | image link | code | removeformat | help',
+          skin: 'oxide-dark',
+          content_css: 'dark',
+          promotion: false,
+          branding: false,
+          statusbar: false,
+          resize: false,
+          placeholder: 'Soru metnini buraya yazın...',
+          language: 'tr_TR',
+          // Base64 olarak resim ekleme desteği
+          images_upload_handler: (blobInfo) => {
+            return new Promise((resolve) => {
+              const reader = new FileReader();
+              reader.onloadend = () => {
+                resolve(reader.result as string);
+              };
+              reader.readAsDataURL(blobInfo.blob());
+            });
+          },
+          // Tablo varsayılan stilleri
+          table_default_styles: {
+            'border-collapse': 'collapse',
+            'width': '100%'
+          },
+          table_default_attributes: {
+            border: '1'
+          },
+          content_style: `
+            body { 
+              font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif; 
+              font-size: 14px; 
+              color: #e2e8f0;
+              background-color: #334155;
+              padding: 8px;
+            }
+            table { 
+              border-collapse: collapse; 
+              width: 100%; 
+            }
+            table td, table th { 
+              border: 1px solid #64748b; 
+              padding: 8px; 
+            }
+            img { 
+              max-width: 100%; 
+              height: auto; 
+            }
+          `
+        }}
       />
     </div>
   );
